@@ -73,4 +73,10 @@ public class Inquiry extends BaseTimeEntity {
                                  String email, String phone, String message) {
         return new Inquiry(type, companyName, contactName, email, phone, message);
     }
+
+    /** admin 처리 — 상태 변경 + 내부 메모. */
+    public void updateStatus(InquiryStatus status, String adminNote) {
+        this.status = status;
+        this.adminNote = adminNote;
+    }
 }

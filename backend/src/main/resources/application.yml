@@ -8,11 +8,18 @@ spring:
       hibernate:
         default_batch_fetch_size: 100
 
+  servlet:
+    multipart:
+      max-file-size: 10MB          # api.md §8: 이미지 최대 10MB
+      max-request-size: 10MB
+
 ondo:
   jwt:
     secret: ${JWT_SECRET:dev-only-secret-key-change-me-in-production-1234567890}
     access-token-validity: 1800      # 30분 (초)
     refresh-token-validity: 1209600  # 14일 (초)
+  upload:
+    dir: ${UPLOAD_DIR:./uploads}     # 로컬 이미지 저장 디렉토리
 
 ---
 # ===== dev: H2 인메모리 =====

@@ -109,4 +109,31 @@ public class Project extends BaseTimeEntity {
         participants.add(participant);
         participant.assignProject(this);
     }
+
+    /** admin 수정 — slug 불변. */
+    public void update(String title, ProjectType type, String clientName, String summary,
+                       String description, String resultMetric, String thumbnailUrl,
+                       LocalDate projectDate, boolean featured, int displayOrder, boolean published) {
+        this.title = title;
+        this.type = type;
+        this.clientName = clientName;
+        this.summary = summary;
+        this.description = description;
+        this.resultMetric = resultMetric;
+        this.thumbnailUrl = thumbnailUrl;
+        this.projectDate = projectDate;
+        this.featured = featured;
+        this.displayOrder = displayOrder;
+        this.published = published;
+    }
+
+    public void replaceImages(List<ProjectImage> newImages) {
+        images.clear();
+        newImages.forEach(this::addImage);
+    }
+
+    public void replaceParticipants(List<ProjectArtisan> newParticipants) {
+        participants.clear();
+        newParticipants.forEach(this::addParticipant);
+    }
 }

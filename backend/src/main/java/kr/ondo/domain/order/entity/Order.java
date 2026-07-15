@@ -104,4 +104,13 @@ public class Order extends BaseTimeEntity {
         this.status = OrderStatus.PAID;
         this.paidAt = LocalDateTime.now();
     }
+
+    /** 상태 전이 (전이 규칙 검증은 서비스에서). PAID 전이 시 paidAt 기록. */
+    public void changeStatus(OrderStatus newStatus) {
+        if (newStatus == OrderStatus.PAID) {
+            markPaid();
+        } else {
+            this.status = newStatus;
+        }
+    }
 }

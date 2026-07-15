@@ -107,4 +107,29 @@ public class Product extends BaseTimeEntity {
     public void soldOut() {
         this.status = ProductStatus.SOLD_OUT;
     }
+
+    /** admin 수정 — slug 불변. 보유자 재지정 가능. */
+    public void update(Artisan artisan, String name, ProductCategory category, int price,
+                       String summary, String description, String thumbnailUrl, int stockQuantity,
+                       ProductStatus status, String externalUrl) {
+        this.artisan = artisan;
+        this.name = name;
+        this.category = category;
+        this.price = price;
+        this.summary = summary;
+        this.description = description;
+        this.thumbnailUrl = thumbnailUrl;
+        this.stockQuantity = stockQuantity;
+        this.status = status;
+        this.externalUrl = externalUrl;
+    }
+
+    public void changeStatus(ProductStatus status) {
+        this.status = status;
+    }
+
+    public void replaceImages(List<ProductImage> newImages) {
+        images.clear();
+        newImages.forEach(this::addImage);
+    }
 }

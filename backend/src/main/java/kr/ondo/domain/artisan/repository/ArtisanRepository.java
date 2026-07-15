@@ -17,6 +17,12 @@ public interface ArtisanRepository extends JpaRepository<Artisan, Long> {
 
     Page<Artisan> findByPublishedTrueAndDesignation(Designation designation, Pageable pageable);
 
+    boolean existsBySlug(String slug);
+
+    /** admin 상세 — 갤러리 함께 로드. */
+    @EntityGraph(attributePaths = "images")
+    Optional<Artisan> findWithImagesById(Long id);
+
     /** 상세: 갤러리까지 함께 로드 (N+1 방지). */
     @EntityGraph(attributePaths = "images")
     Optional<Artisan> findBySlugAndPublishedTrue(String slug);

@@ -21,4 +21,8 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     /** 상세는 ORIGINAL 전용 (CURATED는 상세 없음). artisan 함께 로드. */
     @EntityGraph(attributePaths = "artisan")
     Optional<News> findByIdAndPublishedTrueAndType(Long id, NewsType type);
+
+    /** admin 상세 — 공개 여부·타입 무관. */
+    @EntityGraph(attributePaths = "artisan")
+    Optional<News> findWithArtisanById(Long id);
 }
