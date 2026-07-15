@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" font-family="Archivo, Pretendard, sans-serif">
+  <rect width="1280" height="860" fill="#FAFAFA"/>
+  <text x="48" y="72" font-size="40" font-weight="700" fill="#000000" letter-spacing="-0.8">Foundation / Typography</text>
+  <text x="48" y="104" font-size="14" fill="#666666">한글 본문: Pretendard · 라틴 디스플레이(로고·영문 헤드라인·숫자): Archivo · 스케일 외 임의 크기 금지</text>
+
+  <text x="48" y="200" font-size="104" font-weight="700" fill="#000000" letter-spacing="-2">전통의 온도</text>
+  <text x="900" y="200" font-size="13" fill="#666666">display · clamp(48~104px) · tight 1.15 · 홈 히어로 전용</text>
+
+  <text x="48" y="300" font-size="48" font-weight="700" fill="#000000" letter-spacing="-1">페이지 제목 h1</text>
+  <text x="900" y="300" font-size="13" fill="#666666">2xl · 48px · bold · tight</text>
+
+  <text x="48" y="380" font-size="32" font-weight="700" fill="#000000" letter-spacing="-0.6">섹션 제목 h2</text>
+  <text x="900" y="380" font-size="13" fill="#666666">xl · 32px · bold · tight</text>
+
+  <text x="48" y="448" font-size="24" font-weight="700" fill="#000000">카드 제목 h3</text>
+  <text x="900" y="448" font-size="13" fill="#666666">lg · 24px · bold</text>
+
+  <text x="48" y="512" font-size="20" fill="#000000">리드 문단 — 보유자는 창작에 집중하고, 온도는 시장과 연결합니다.</text>
+  <text x="900" y="512" font-size="13" fill="#666666">md · 20px · regular</text>
+
+  <text x="48" y="572" font-size="17" fill="#000000">본문 — 무형문화재 보유자의 브랜딩·상품기획·판매·계약을 전담하는 전통문화 소속사.</text>
+  <text x="900" y="572" font-size="13" fill="#666666">base · 17px · line-height 1.6</text>
+
+  <text x="48" y="628" font-size="15" fill="#000000">보조 본문 — 카드 shortIntro, 부가 설명에 사용합니다.</text>
+  <text x="900" y="628" font-size="13" fill="#666666">sm · 15px</text>
+
+  <text x="48" y="680" font-size="13" fill="#666666">캡션·메타 — 날짜, 출처, 사업자 정보</text>
+  <text x="900" y="680" font-size="13" fill="#666666">xs · 13px · text-muted</text>
+
+  <line x1="48" y1="720" x2="1232" y2="720" stroke="#E5E5E5"/>
+  <text x="48" y="768" font-size="18" font-weight="700" fill="#000000">Weights</text>
+  <text x="48" y="808" font-size="17" font-weight="400" fill="#000000">Regular 400</text>
+  <text x="220" y="808" font-size="17" font-weight="500" fill="#000000">Medium 500</text>
+  <text x="400" y="808" font-size="17" font-weight="700" fill="#000000">Bold 700</text>
+  <text x="560" y="808" font-size="13" fill="#666666">히어로·헤드라인 자간 -0.02em</text>
+</svg>

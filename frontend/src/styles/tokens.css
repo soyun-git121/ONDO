@@ -1,0 +1,56 @@
+/* ONDO 디자인 토큰 — design.md가 원본. 여기 외에 hex 사용 금지. */
+:root {
+  /* neutrals */
+  --color-bg-base: #FAFAFA;
+  --color-surface-base: #FFFFFF;
+  --color-surface-muted: #F2F2F2;
+  --color-text-primary: #000000;
+  --color-text-muted: #666666;
+  --color-border-base: #E5E5E5;
+
+  /* brand — 위에 올라가는 텍스트는 반드시 검정 (design.md Contrast rules) */
+  --color-brand-primary: #E0F69D; /* 라임 — CTA 배경·강조 블록·전통 문양 (05-wireframe-home 기준) */
+  --color-brand-secondary: #E6E090; /* 옐로 — 보조 강조(resultMetric 등), 라임과 근친 톤 */
+  --color-brand-accent: #E0F69D; /* 라임 — 아이브로우 도트·마커·hover. 텍스트 색 사용 금지 */
+
+  /* semantic */
+  --color-text-on-primary: #000000;
+  --color-focus-ring: #000000;
+  --color-error: #D14343;
+  --color-success: #1F7A5C;
+
+  /* typography */
+  --font-family-sans: "Pretendard Variable", Pretendard, -apple-system, sans-serif;
+  --font-family-display: "Archivo", "Pretendard Variable", Helvetica, sans-serif;
+  --font-size-xs: 0.8125rem;
+  --font-size-sm: 0.9375rem;
+  --font-size-base: 1.0625rem;
+  --font-size-md: 1.25rem;
+  --font-size-lg: 1.5rem;
+  --font-size-xl: 2rem;
+  --font-size-2xl: 3rem;
+  --font-size-display: clamp(3rem, 8vw, 6.5rem);
+  --line-height-tight: 1.15;
+  --line-height-base: 1.6;
+
+  /* spacing (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 64px;
+  --space-8: 96px;
+  --space-9: 160px;
+
+  /* radius / shadow / motion */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-pill: 999px;
+  --shadow-1: rgba(0, 0, 0, 0.06) 0 1px 4px;
+  --shadow-2: rgba(0, 0, 0, 0.12) 0 4px 16px;
+  --motion-fast: 200ms;
+  --motion-base: 400ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}

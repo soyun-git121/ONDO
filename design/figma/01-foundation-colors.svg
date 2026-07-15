@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" font-family="Archivo, Pretendard, sans-serif">
+  <rect width="1280" height="720" fill="#FAFAFA"/>
+  <text x="48" y="72" font-size="40" font-weight="700" fill="#000000" letter-spacing="-0.8">Foundation / Color</text>
+  <text x="48" y="104" font-size="14" fill="#666666">design.md 토큰 — 컴포넌트에서 raw hex 금지, CSS 변수만 사용</text>
+
+  <!-- Neutrals -->
+  <text x="48" y="160" font-size="18" font-weight="700" fill="#000000">Neutrals</text>
+  <g>
+    <rect x="48" y="180" width="176" height="96" rx="8" fill="#FAFAFA" stroke="#E5E5E5"/>
+    <text x="60" y="300" font-size="13" font-weight="500" fill="#000000">bg-base</text>
+    <text x="60" y="318" font-size="12" fill="#666666">#FAFAFA</text>
+
+    <rect x="248" y="180" width="176" height="96" rx="8" fill="#FFFFFF" stroke="#E5E5E5"/>
+    <text x="260" y="300" font-size="13" font-weight="500" fill="#000000">surface-base</text>
+    <text x="260" y="318" font-size="12" fill="#666666">#FFFFFF</text>
+
+    <rect x="448" y="180" width="176" height="96" rx="8" fill="#F2F2F2"/>
+    <text x="460" y="300" font-size="13" font-weight="500" fill="#000000">surface-muted</text>
+    <text x="460" y="318" font-size="12" fill="#666666">#F2F2F2</text>
+
+    <rect x="648" y="180" width="176" height="96" rx="8" fill="#000000"/>
+    <text x="660" y="300" font-size="13" font-weight="500" fill="#000000">text-primary</text>
+    <text x="660" y="318" font-size="12" fill="#666666">#000000</text>
+
+    <rect x="848" y="180" width="176" height="96" rx="8" fill="#666666"/>
+    <text x="860" y="300" font-size="13" font-weight="500" fill="#000000">text-muted</text>
+    <text x="860" y="318" font-size="12" fill="#666666">#666666 — 본문 이하 크기에 이보다 밝은 회색 금지</text>
+
+    <rect x="1048" y="180" width="176" height="96" rx="8" fill="#E5E5E5"/>
+    <text x="1060" y="300" font-size="13" font-weight="500" fill="#000000">border-base</text>
+    <text x="1060" y="318" font-size="12" fill="#666666">#E5E5E5</text>
+  </g>
+
+  <!-- Brand -->
+  <text x="48" y="380" font-size="18" font-weight="700" fill="#000000">Brand — 위 텍스트·아이콘은 반드시 #000, 흰색 금지</text>
+  <g>
+    <rect x="48" y="400" width="240" height="96" rx="8" fill="#E0F69D"/>
+    <text x="60" y="456" font-size="14" font-weight="700" fill="#000000">brand-primary</text>
+    <text x="60" y="520" font-size="12" fill="#666666">#E0F69D — 주요 CTA 배경, 강조 블록</text>
+
+    <rect x="320" y="400" width="240" height="96" rx="8" fill="#E6E090"/>
+    <text x="332" y="456" font-size="14" font-weight="700" fill="#000000">brand-secondary</text>
+    <text x="332" y="520" font-size="12" fill="#666666">#E6E090 — 보조 강조, 태그, resultMetric</text>
+
+    <rect x="592" y="400" width="240" height="96" rx="8" fill="#E0F69D"/>
+    <text x="604" y="456" font-size="14" font-weight="700" fill="#000000">brand-accent</text>
+    <text x="604" y="520" font-size="12" fill="#666666">#E0F69D — 텍스트 색 사용 금지. 마커·하이라이트·장식 전용</text>
+  </g>
+
+  <!-- Semantic -->
+  <text x="48" y="580" font-size="18" font-weight="700" fill="#000000">Semantic</text>
+  <g>
+    <rect x="48" y="600" width="176" height="64" rx="8" fill="#000000"/>
+    <text x="60" y="688" font-size="12" fill="#666666">focus-ring #000000</text>
+
+    <rect x="248" y="600" width="176" height="64" rx="8" fill="#D14343"/>
+    <text x="260" y="688" font-size="12" fill="#666666">error #D14343</text>
+
+    <rect x="448" y="600" width="176" height="64" rx="8" fill="#1F7A5C"/>
+    <text x="460" y="688" font-size="12" fill="#666666">success #1F7A5C</text>
+
+    <rect x="648" y="600" width="176" height="64" rx="8" fill="#000000"/>
+    <text x="660" y="688" font-size="12" fill="#666666">text-on-primary #000000</text>
+  </g>
+</svg>
