@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
@@ -27,6 +28,13 @@ public class GlobalExceptionHandler {
                 .orElse(GlobalErrorCode.INVALID_INPUT.getMessage());
         return ResponseEntity.status(GlobalErrorCode.INVALID_INPUT.getStatus())
                 .body(ApiResponse.fail(GlobalErrorCode.INVALID_INPUT.getCode(), message));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMaxUpload(MaxUploadSizeExceededException e) {
+        return ResponseEntity.status(GlobalErrorCode.INVALID_INPUT.getStatus())
+                .body(ApiResponse.fail(GlobalErrorCode.INVALID_INPUT.getCode(),
+                        "파일 크기가 허용 한도(10MB)를 초과했습니다."));
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

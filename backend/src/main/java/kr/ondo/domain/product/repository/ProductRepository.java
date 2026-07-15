@@ -40,6 +40,17 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @EntityGraph(attributePaths = {"images", "artisan"})
     Optional<Product> findBySlugAndStatusNot(String slug, ProductStatus status);
 
+    boolean existsBySlug(String slug);
+
+    /** admin 상세 — 상태 무관, 이미지+보유자 로드. */
+    @EntityGraph(attributePaths = {"images", "artisan"})
+    Optional<Product> findWithDetailsById(Long id);
+
+    /** 주문 취소 시 재고 복원. */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("update Product p set p.stockQuantity = p.stockQuantity + :qty where p.id = :id")
+    int increaseStock(@Param("id") Long id, @Param("qty") int qty);
+
     /** 보유자 랜딩용 — HIDDEN 제외 최신순 (api.md §2: 최신 8개). */
     @Query("select p from Product p where p.artisan.id = :artisanId and p.status <> :hidden order by p.createdAt desc")
     List<Product> findByArtisanForLanding(@Param("artisanId") Long artisanId,
@@ -50,7 +61,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      * 재고 조건부 차감 — 동시성 안전(db_schema.md 운영 노트).
      * 재고가 충분할 때만 차감되고, 영향받은 행 수(0 또는 1)를 반환한다.
      */
-    @Modifying
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("update Product p set p.stockQuantity = p.stockQuantity - :qty "
             + "where p.id = :id and p.stockQuantity >= :qty")
     int decreaseStock(@Param("id") Long id, @Param("qty") int qty);

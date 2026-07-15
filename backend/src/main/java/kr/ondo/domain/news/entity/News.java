@@ -86,4 +86,23 @@ public class News extends BaseTimeEntity {
         this.published = published;
         this.publishedAt = publishedAt;
     }
+
+    /** admin 수정 (published는 PATCH /publish로 별도 관리). */
+    public void update(String title, String thumbnailUrl, NewsType type, String content,
+                       String externalUrl, String sourceName, NewsCategory category,
+                       Artisan artisan, LocalDateTime publishedAt) {
+        this.title = title;
+        this.thumbnailUrl = thumbnailUrl;
+        this.type = type;
+        this.content = content;
+        this.externalUrl = externalUrl;
+        this.sourceName = sourceName;
+        this.category = category;
+        this.artisan = artisan;
+        this.publishedAt = publishedAt;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
+    }
 }

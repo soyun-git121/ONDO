@@ -33,6 +33,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Optional<Project> findBySlugAndPublishedTrue(String slug);
 
+    boolean existsBySlug(String slug);
+
     /** 보유자 랜딩용 — 해당 보유자가 참여한 공개 실적 (projectDate DESC). api.md §2. */
     @Query("""
             select p from Project p

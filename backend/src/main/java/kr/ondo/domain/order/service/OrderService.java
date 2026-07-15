@@ -53,18 +53,21 @@ public class OrderService {
                         "구매할 수 없는 상품입니다: " + product.getName());
             }
 
+            // 스냅샷 값은 재고 차감(영속성 컨텍스트 flush/clear) 전에 확보한다.
+            // (가격·이름은 서버 기준 — 클라이언트 금액 신뢰 안 함)
+            Long productId = product.getId();
+            String productName = product.getName();
+            String artisanName = product.getArtisan().getName();
+            int price = product.getPrice();
+
             // 재고 조건부 차감 — 부족하면 0행 → OUT_OF_STOCK (동시성 안전)
-            int updated = productRepository.decreaseStock(product.getId(), item.quantity());
+            int updated = productRepository.decreaseStock(productId, item.quantity());
             if (updated == 0) {
                 throw new BusinessException(OrderErrorCode.OUT_OF_STOCK,
-                        "재고가 부족합니다: " + product.getName());
+                        "재고가 부족합니다: " + productName);
             }
 
-            // 가격·이름은 서버 기준 스냅샷 (클라이언트 금액 신뢰 안 함)
-            order.addItem(OrderItem.snapshot(
-                    product.getId(), product.getName(), product.getArtisan().getName(),
-                    product.getPrice(), item.quantity()
-            ));
+            order.addItem(OrderItem.snapshot(productId, productName, artisanName, price, item.quantity()));
         }
 
         orderRepository.save(order);
