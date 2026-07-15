@@ -12,6 +12,7 @@ public enum GlobalErrorCode implements ErrorCode {
     UNAUTHORIZED("UNAUTHORIZED", "인증이 필요합니다.", HttpStatus.UNAUTHORIZED),
     FORBIDDEN("FORBIDDEN", "접근 권한이 없습니다.", HttpStatus.FORBIDDEN),
     NOT_FOUND("NOT_FOUND", "요청한 리소스를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    DUPLICATE_SLUG("DUPLICATE_SLUG", "이미 사용 중인 slug입니다.", HttpStatus.CONFLICT),
     INTERNAL_ERROR("INTERNAL_ERROR", "서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final String code;

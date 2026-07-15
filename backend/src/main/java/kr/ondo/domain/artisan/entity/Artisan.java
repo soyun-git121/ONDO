@@ -103,6 +103,29 @@ public class Artisan extends BaseTimeEntity {
         image.assignArtisan(this);
     }
 
+    /** admin 수정 — slug는 식별자라 불변, 나머지 필드만 갱신. */
+    public void update(String name, String title, Designation designation, String shortIntro,
+                       String story, String profileImageUrl, String coverImageUrl, String videoUrl,
+                       Map<String, String> snsLinks, int displayOrder, boolean published) {
+        this.name = name;
+        this.title = title;
+        this.designation = designation;
+        this.shortIntro = shortIntro;
+        this.story = story;
+        this.profileImageUrl = profileImageUrl;
+        this.coverImageUrl = coverImageUrl;
+        this.videoUrl = videoUrl;
+        this.snsLinks = snsLinks;
+        this.displayOrder = displayOrder;
+        this.published = published;
+    }
+
+    /** 갤러리 전체 교체 (orphanRemoval로 기존 이미지 삭제). */
+    public void replaceImages(List<ArtisanImage> newImages) {
+        images.clear();
+        newImages.forEach(this::addImage);
+    }
+
     public void publish() {
         this.published = true;
     }
