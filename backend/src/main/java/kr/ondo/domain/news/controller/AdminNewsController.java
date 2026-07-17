@@ -7,6 +7,7 @@ import kr.ondo.domain.news.dto.NewsCreateRequest;
 import kr.ondo.domain.news.dto.NewsPublishRequest;
 import kr.ondo.domain.news.dto.NewsUpdateRequest;
 import kr.ondo.domain.news.service.AdminNewsService;
+import kr.ondo.domain.news.service.NewsImportService;
 import kr.ondo.global.response.ApiResponse;
 import kr.ondo.global.response.PageResponse;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminNewsController {
 
     private final AdminNewsService adminNewsService;
+    private final NewsImportService newsImportService;
+
+    /** 네이버 뉴스 검색 API로 전통문화 기사 가져오기(CURATED, 중복 URL 제외). 수동 실행. */
+    @PostMapping("/import")
+    public ApiResponse<Integer> importFromNaver(
+            @RequestParam(defaultValue = "전통문화") String query,
+            @RequestParam(defaultValue = "10") int display) {
+        return ApiResponse.ok(newsImportService.importFromNaver(query, display));
+    }
 
     @GetMapping
     public ApiResponse<PageResponse<AdminNewsListItem>> list(

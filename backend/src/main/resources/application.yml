@@ -20,6 +20,9 @@ ondo:
     refresh-token-validity: 1209600  # 14일 (초)
   upload:
     dir: ${UPLOAD_DIR:./uploads}     # 로컬 이미지 저장 디렉토리
+  naver:
+    client-id: ${NAVER_CLIENT_ID:}       # 네이버 검색(뉴스) API — backend/.env(gitignored)로 로컬 주입
+    client-secret: ${NAVER_CLIENT_SECRET:}
 
 ---
 # ===== dev: H2 인메모리 =====
