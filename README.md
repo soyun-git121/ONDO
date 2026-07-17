@@ -55,3 +55,7 @@ npm run dev
 - [ ] Phase 2: 프론트 공개 페이지
 - [ ] Phase 3: 관리자 화면 + 배포
 - [ ] Phase 4: PG 실연동, 다국어
+[
+## 참고사이트 
+(https://www.yungbld.com/)
+(https://blit.studio/)
