@@ -197,8 +197,8 @@ ProductCard, ProjectCard는 동일 카드 규격을 상속한다. 차이: Produc
 ### 6. Footer
 
 - 상단: display 타이포 한 줄 ("전통의 온도를 잇습니다") — blit 푸터 방식.
-- 정보: 사업자 정보(text-xs, text-muted) / 내비 링크 / SNS 아이콘(인스타그램 우선, 아이콘+`aria-label="ONDO 인스타그램"`, 새 탭 `rel="noopener"`).
-- 배경 surface-muted, 상단 border.
+- 정보: 사업자 정보(text-xs, text-muted) / 내비 링크(About·보유자·Shop·Project·News·협업문의) / SNS 아이콘(인스타그램 우선, 아이콘+`aria-label="ONDO 인스타그램"`, 새 탭 `rel="noopener"`).
+- 배경 **brand-primary(라임 #E0F69D)** — 05-wireframe 하단바 기준. 라임 위 텍스트·아이콘은 검정(text-primary), 보조 텍스트는 text-muted(#666, 라임 대비 ≈5:1 AA pass). 상단 border-base. **흰 텍스트 금지.**
 
 ## Accessibility Acceptance Criteria (testable)
 
