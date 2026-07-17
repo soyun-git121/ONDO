@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>페이지 ↔ 와이어프레임 오버레이</title>
+<style>
+  html, body { margin: 0; background: #fff; font: 12px/1.4 system-ui, sans-serif; }
+  #ctl {
+    position: fixed; top: 8px; right: 8px; z-index: 99;
+    background: #111; color: #fff; padding: 10px 12px; border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3); max-width: 260px;
+  }
+  #ctl a { color: #cde86b; }
+  #ctl label { display: block; margin-top: 6px; }
+  #ctl select, #ctl input[type=range] { width: 100%; }
+  #stage { position: relative; width: 1440px; }
+  #live { position: absolute; top: 0; left: 0; width: 1440px; border: 0; display: block; }
+  #wire { position: absolute; top: 0; left: 0; width: 1440px; opacity: .5; pointer-events: none; }
+  #missing { padding: 40px; color: #a33; font-size: 14px; display: none; }
+</style>
+</head>
+<body>
+  <div id="ctl">
+    <div id="picker"></div>
+    <div style="margin-top:8px">와이어 투명도 <span id="opv">0.50</span></div>
+    <input id="op" type="range" min="0" max="1" step="0.05" value="0.5" />
+    <label><input type="checkbox" id="onlywire" /> 와이어프레임만</label>
+    <label><input type="checkbox" id="onlylive" /> 라이브만</label>
+  </div>
+  <div id="missing"></div>
+  <div id="stage">
+    <iframe id="live" scrolling="no"></iframe>
+    <img id="wire" alt="wireframe" />
+  </div>
+  <script>
+    // 페이지별 매핑: { 라벨: [라이브 경로, 와이어 SVG 경로] }
+    // 와이어 SVG가 _ref/ 에 들어오는 대로 여기만 늘리면 됨.
+    const PAGES = {
+      "홈":            ["/",              "/_ref/home-wire.svg"],
+      "보유자":        ["/artisans",      "/_ref/artisans-wire.svg"],
+      "Shop":          ["/shop",          "/_ref/shop-wire.svg"],
+      "상품상세":      ["/shop",          "/_ref/product-wire.svg"],
+      "주문":          ["/order",         "/_ref/order-wire.svg"],
+      "협업":          ["/collaboration", "/_ref/collab-wire.svg"],
+      "News":          ["/news",          "/_ref/news-wire.svg"],
+      "About":         ["/about",         "/_ref/about-wire.svg"],
+    };
+    const live = document.getElementById('live');
+    const wire = document.getElementById('wire');
+    const op = document.getElementById('op');
+    const opv = document.getElementById('opv');
+    const params = new URLSearchParams(location.search);
+
+    // 셀렉트 빌드
+    const picker = document.getElementById('picker');
+    const sel = document.createElement('select');
+    Object.keys(PAGES).forEach(k => {
+      const o = document.createElement('option'); o.value = k; o.textContent = k; sel.appendChild(o);
+    });
+    picker.appendChild(sel);
+    sel.onchange = () => load(sel.value);
+
+    function fit() {
+      try {
+        const h = live.contentDocument.body.scrollHeight;
+        live.style.height = h + 'px';
+        const wh = wire.naturalWidth ? wire.naturalHeight * (1440 / wire.naturalWidth) : 0;
+        document.getElementById('stage').style.height = Math.max(h, wh) + 'px';
+      } catch (e) {}
+    }
+    async function load(key) {
+      const [liveUrl, wireUrl] = PAGES[key];
+      live.src = liveUrl;
+      // 와이어 파일 존재 확인
+      let ok = false;
+      try { const r = await fetch(wireUrl, { method: 'HEAD' }); ok = r.ok; } catch (e) {}
+      const miss = document.getElementById('missing');
+      if (ok) { wire.src = wireUrl; wire.style.display = 'block'; miss.style.display = 'none'; }
+      else {
+        wire.removeAttribute('src'); wire.style.display = 'none';
+        miss.style.display = 'block';
+        miss.textContent = `⚠ ${wireUrl} 아직 없음 — 이 페이지 와이어 SVG를 _ref/ 에 넣어주세요. (라이브만 표시 중)`;
+      }
+    }
+    live.addEventListener('load', () => { fit(); setTimeout(fit, 600); });
+    op.oninput = () => { wire.style.opacity = op.value; opv.textContent = (+op.value).toFixed(2); };
+    document.getElementById('onlywire').onchange = (e) => {
+      live.style.visibility = e.target.checked ? 'hidden' : 'visible';
+      wire.style.opacity = e.target.checked ? 1 : op.value;
+    };
+    document.getElementById('onlylive').onchange = (e) => {
+      wire.style.visibility = e.target.checked ? 'hidden' : 'visible';
+    };
+
+    // 초기 로드: ?page=보유자 또는 기본 홈
+    const initKey = params.get('page') && PAGES[params.get('page')] ? params.get('page') : "홈";
+    sel.value = initKey; load(initKey);
+  </script>
+</body>
+</html>

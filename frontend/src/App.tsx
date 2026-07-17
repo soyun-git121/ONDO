@@ -3,7 +3,6 @@ import Layout from "./components/layout/Layout";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Artisans from "./pages/Artisans";
-import ArtisanDetail from "./pages/ArtisanDetail";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import OrderPage from "./pages/OrderPage";
@@ -22,7 +21,6 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/artisans" element={<Artisans />} />
-        <Route path="/artisans/:slug" element={<ArtisanDetail />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/shop/:slug" element={<ProductDetail />} />
         <Route path="/order" element={<OrderPage />} />

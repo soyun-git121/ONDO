@@ -43,7 +43,7 @@ export default function About() {
             </div>
             <div aria-hidden="true" className="col-span-2 col-start-7 row-start-2 mt-9 aspect-square bg-text-primary" />
             <div className="col-span-7 col-start-6 row-start-3 mt-8">
-              <p className="font-display text-2xl font-bold leading-tight tracking-[-0.02em] lg:text-display">
+              <p className="font-display text-2xl font-bold leading-[1.12] tracking-[-0.02em] lg:text-[3.5rem]">
                 전통의 온도를 잇는
                 <br />
                 소속사, 온도

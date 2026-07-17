@@ -11,9 +11,9 @@ export default function EmptyBlock({
 }) {
   return (
     <div
-      className={`flex items-center justify-center rounded-md border border-dashed border-border-base bg-surface-muted ${className}`}
+      className={`flex items-center justify-center rounded-md bg-surface-muted ${className}`}
     >
-      <span className="text-sm text-text-muted">{label}</span>
+      {label && <span className="text-sm text-text-muted">{label}</span>}
     </div>
   );
 }

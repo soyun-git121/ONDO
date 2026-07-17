@@ -1,43 +1,72 @@
 import { Link } from "react-router-dom";
 import { getHome } from "../api/home";
+import { getProjects } from "../api/projects";
 import { useFetch } from "../hooks/useFetch";
 import Container from "../components/layout/Container";
-import SectionHeading from "../components/ui/SectionHeading";
 import EmptyBlock from "../components/ui/EmptyBlock";
 import Logo from "../components/ui/Logo";
-import traditionMark1 from "../assets/tradition_mark_1.svg";
-import traditionMark2 from "../assets/tradition_mark_2.svg";
-import ArtisanCard from "../components/cards/ArtisanCard";
-import ProductCard from "../components/cards/ProductCard";
-import ProjectCard from "../components/cards/ProjectCard";
+import { PROJECT_TYPE_LABEL } from "../types/project";
 import { NEWS_CATEGORY_LABEL } from "../types/news";
 
 /**
- * 홈 — architecture.md §5: 히어로 → ONDO 소개 요약 → 소속 보유자 → 대표 상품 → 실적/뉴스 → 협업 배너.
- * blit.studio 무드(대형 타이포+여백)를 라이트 팔레트로. 자료 없는 섹션은 빈칸 유지.
+ * 홈 — Figma 107:80(blit 에디토리얼) 반영.
+ * 히어로(비대칭 캔버스) → 실적·News를 대형 비대칭 미디어 블록으로 나열 → 푸터.
+ * 전통 문양은 콘텐츠 뒤 장식층으로 흩어 배치(design.md §2).
  */
+
+/**
+ * Figma 107:80 실좌표에서 추출한 블록 슬롯 (컨테이너 1280px = viewport 80~1360 기준).
+ * lg(데스크톱)에서 Figma 폭·위치·비율 정합, lg 미만은 풀폭 스택 → 반응형.
+ *  - Samsung  media 380×337 @x340 → ml 20.31% / w 29.69% / aspect 380:337
+ *  - Hwayo#1  media 500×309 @x900 → ml 64.06% / w 39.06% / aspect 500:309 (우측 살짝 블리드)
+ *  - News+    media 500×309 @x80  → ml 0      / w 39.06% / aspect 500:309
+ *  - Hwayo#2  media 278×624 @x761 → ml 53.20% / w 21.72% / aspect 278:624
+ */
+const SLOT = [
+  { pos: "lg:ml-[20.31%] lg:w-[29.69%]", aspect: "lg:aspect-[380/337]" },
+  { pos: "lg:ml-[64.06%] lg:w-[39.06%]", aspect: "lg:aspect-[500/309]" },
+  { pos: "lg:ml-0 lg:w-[39.06%]", aspect: "lg:aspect-[500/309]" },
+  { pos: "lg:ml-[53.20%] lg:w-[21.72%]", aspect: "lg:aspect-[278/624]" },
+];
+
 export default function Home() {
-  const { data, loading } = useFetch(getHome);
+  const { data } = useFetch(getHome);
+  const { data: projectPage, loading: projLoading } = useFetch(
+    () => getProjects({ featured: true, size: 3 }),
+    [],
+  );
+  const projects = projectPage?.content ?? [];
+  const news = data?.latestNews ?? [];
+
+  // Figma 107:80: 실적·News를 하나의 대형 알터네이팅 에디토리얼 블록 흐름으로.
+  const blocks = [
+    ...projects.map((p) => ({
+      key: `p-${p.slug}`,
+      to: `/projects/${p.slug}`,
+      eyebrow: p.clientName ?? PROJECT_TYPE_LABEL[p.type],
+      title: p.title,
+      meta: [PROJECT_TYPE_LABEL[p.type], p.resultMetric].filter(Boolean).join(" · "),
+      img: p.thumbnailUrl,
+      divider: false,
+    })),
+    ...news.map((n, idx) => ({
+      key: `n-${n.id}`,
+      to: `/news/${n.id}`,
+      eyebrow: "News+",
+      title: n.title,
+      meta: `${NEWS_CATEGORY_LABEL[n.category]} · ${new Date(n.publishedAt).toLocaleDateString("ko-KR")}`,
+      img: n.thumbnailUrl,
+      divider: idx === 0, // 실적 → News 사이 구분선 (Figma)
+    })),
+  ];
 
   return (
     <main>
       {/* ── Hero — blit.studio 비대칭 에디토리얼 캔버스 (design.md §2) ── */}
       <section className="relative isolate overflow-hidden pb-8 pt-6 lg:pb-9">
-        {/* 전통 마크 데코 — 원형 그리드(tradition_mark). 콘텐츠 뒤 장식층, 스크린리더 무시 */}
-        <img
-          src={traditionMark2}
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none absolute -z-10 left-[34%] top-0 w-[190px] opacity-90 md:w-[240px] lg:w-[300px]"
-        />
-        <img
-          src={traditionMark1}
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none absolute -z-10 bottom-4 right-[3%] hidden w-[150px] opacity-90 lg:block lg:w-[190px]"
-        />
+        {/* 전통 문양 배경 데코는 공통 Layout 장식층에서 처리 (design/figma 전 화면 공통) */}
         <Container>
-          {/* 대형 로고 — blit의 "blit." 자리·크기 (logo.svg, H≈205px) */}
+          {/* 대형 로고 — blit의 "blit." 자리·크기 */}
           <Logo className="h-24 w-auto md:h-36 lg:h-[205px]" />
 
           {/* 데스크톱: 흩어진 배치 */}
@@ -54,16 +83,24 @@ export default function Home() {
             </p>
             {/* 빈 미디어 슬롯 3개 — 이미지 확보 전 네모 빈칸 (design.md §2) */}
             <div className="col-span-3 col-start-10 row-span-2">
-              <EmptyBlock label="" className="aspect-[8/9] w-full" />
+              <img
+                src="/uploads/sample/home-sample2.jpg"
+                alt="온도 전통문화 소개"
+                className="aspect-[8/9] w-full rounded-md object-cover"
+              />
             </div>
             <div className="col-span-3 col-start-2 row-start-2 mt-7">
-              <EmptyBlock label="" className="aspect-[3/5] w-full" />
+              <img
+                src="/uploads/sample/home-yoonjonnuk-sample.png"
+                alt="윤종국 악기장 작업 모습"
+                className="aspect-[3/5] w-full rounded-md object-cover"
+              />
             </div>
             <div
               aria-hidden="true"
               className="col-span-2 col-start-7 row-start-2 mt-9 aspect-square bg-text-primary"
             />
-            <h1 className="col-span-7 col-start-6 row-start-3 mt-8 font-display text-display font-bold leading-[1.05] tracking-[-0.02em]">
+            <h1 className="col-span-7 col-start-6 row-start-3 mt-8 font-display text-2xl font-bold leading-[1.12] tracking-[-0.02em] lg:text-[3rem]">
               보유자는 창작에
               <br />
               집중하고, 온도는
@@ -75,7 +112,11 @@ export default function Home() {
           {/* 모바일: 세로 스택 */}
           <div className="mt-6 flex flex-col gap-6 lg:hidden">
             <p className="text-md">전통의 온도를 잇습니다</p>
-            <EmptyBlock label="" className="aspect-[4/5] w-full" />
+            <img
+              src="/uploads/sample/home-yoonjonnuk-sample.png"
+              alt="윤종국 악기장 작업 모습"
+              className="aspect-[4/5] w-full rounded-md object-cover"
+            />
             <h1 className="font-display text-display font-bold leading-[1.1] tracking-[-0.02em]">
               보유자는 창작에 집중하고,
               <br />
@@ -100,130 +141,47 @@ export default function Home() {
         </Container>
       </section>
 
-      {/* ── 소속 보유자 ── */}
-      <section className="pb-8 lg:pb-9">
-        <Container>
-          <SectionHeading title="소속 보유자" to="/artisans" linkLabel="전체 보기" />
-          {data?.featuredArtisans?.length ? (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {data.featuredArtisans.map((a) => (
-                <ArtisanCard key={a.slug} artisan={a} />
-              ))}
-            </div>
+      {/* ── 실적 + News — 대형 좌우 교차 에디토리얼 블록 (Figma 107:80) ── */}
+      <section className="relative isolate overflow-hidden py-8 lg:py-9">
+        <Container className="relative flex flex-col gap-12 lg:gap-16">
+          {blocks.length > 0 ? (
+            blocks.map((b, i) => {
+              const slot = SLOT[i % SLOT.length];
+              return (
+                <div key={b.key} className="w-full">
+                  {b.divider && <hr className="mb-12 border-border-base lg:mb-16" />}
+                  <Link to={b.to} className={`group block w-full ${slot.pos}`}>
+                    {/* ● 라벨 아이브로우 (blit) — 프로젝트는 클라이언트명, 뉴스는 News+ */}
+                    <p className="mb-4 flex items-center gap-2 text-base font-medium">
+                      <span aria-hidden="true" className="h-2 w-2 rounded-pill bg-accent" />
+                      {b.eyebrow}
+                    </p>
+                    {b.img ? (
+                      <img
+                        src={b.img}
+                        alt={b.title}
+                        className={`w-full rounded-md object-cover aspect-[4/3] transition-transform duration-fast group-hover:scale-[1.01] ${slot.aspect}`}
+                      />
+                    ) : (
+                      <EmptyBlock label="" className={`w-full aspect-[4/3] ${slot.aspect}`} />
+                    )}
+                    <h2 className="mt-5 font-display text-xl font-bold leading-tight tracking-[-0.02em] underline-offset-8 group-hover:underline lg:text-2xl">
+                      {b.title}
+                    </h2>
+                    <p className="mt-2 text-md text-text-muted">{b.meta}</p>
+                  </Link>
+                </div>
+              );
+            })
           ) : (
             <EmptyBlock
-              label={loading ? "불러오는 중…" : "보유자 소개 준비 중"}
-              className="h-48"
+              label={projLoading ? "불러오는 중…" : "콘텐츠 준비 중"}
+              className="h-64"
             />
           )}
         </Container>
       </section>
 
-      {/* ── 대표 상품 ── */}
-      <section className="pb-8 lg:pb-9">
-        <Container>
-          <SectionHeading title="대표 상품" to="/shop" linkLabel="Shop 보기" />
-          {data?.featuredProducts?.length ? (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {data.featuredProducts.map((p) => (
-                <ProductCard
-                  key={p.slug}
-                  slug={p.slug}
-                  name={p.name}
-                  price={p.price}
-                  status={p.status}
-                  thumbnailUrl={p.thumbnailUrl}
-                  artisanName={p.artisanName}
-                />
-              ))}
-            </div>
-          ) : (
-            <EmptyBlock label={loading ? "불러오는 중…" : "상품 준비 중"} className="h-48" />
-          )}
-        </Container>
-      </section>
-
-      {/* ── Project (협업 실적) — blit "● Project" 아이브로우 (design.md §3) ── */}
-      <section className="pb-8 lg:pb-9">
-        <Container>
-          <div className="mb-6 flex items-end justify-between gap-4">
-            <h2 className="flex items-center gap-2 text-base font-medium">
-              <span aria-hidden="true" className="h-2 w-2 rounded-pill bg-accent" />
-              Project
-            </h2>
-            <Link to="/projects" className="shrink-0 text-sm underline-offset-4 hover:underline">
-              전체 보기
-            </Link>
-          </div>
-          {data?.featuredProjects?.length ? (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {data.featuredProjects.map((p) => (
-                <ProjectCard
-                  key={p.slug}
-                  slug={p.slug}
-                  title={p.title}
-                  type={p.type}
-                  resultMetric={p.resultMetric}
-                  thumbnailUrl={p.thumbnailUrl}
-                />
-              ))}
-            </div>
-          ) : (
-            <EmptyBlock label={loading ? "불러오는 중…" : "협업 실적 준비 중"} className="h-48" />
-          )}
-        </Container>
-      </section>
-
-      {/* ── 뉴스 ── */}
-      <section className="pb-8 lg:pb-9">
-        <Container>
-          {/* "News +" 헤더 자체가 /news 목록으로 가는 링크 */}
-          <div className="mb-6">
-            <Link
-              to="/news"
-              aria-label="News 목록 전체 보기"
-              className="inline-flex items-baseline gap-1 font-display text-xl font-bold leading-tight tracking-tight underline-offset-8 transition-colors duration-fast hover:underline lg:text-2xl"
-            >
-              News <span aria-hidden="true">+</span>
-            </Link>
-          </div>
-          {data?.latestNews?.length ? (
-            <ul className="divide-y divide-border-base border-y border-border-base">
-              {data.latestNews.map((n) => (
-                <li key={n.id}>
-                  <Link
-                    to={`/news/${n.id}`}
-                    className="flex items-baseline justify-between gap-4 py-4 transition-colors duration-fast hover:bg-surface-muted"
-                  >
-                    <span className="text-base font-medium">{n.title}</span>
-                    <span className="shrink-0 text-xs text-text-muted">
-                      {NEWS_CATEGORY_LABEL[n.category]} ·{" "}
-                      {new Date(n.publishedAt).toLocaleDateString("ko-KR")}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <EmptyBlock label={loading ? "불러오는 중…" : "소식 준비 중"} className="h-32" />
-          )}
-        </Container>
-      </section>
-
-      {/* ── 협업 배너 ── */}
-      <section className="bg-primary">
-        <Container className="flex flex-col items-start gap-6 py-8 lg:py-9">
-          <p className="font-display text-2xl font-bold leading-tight tracking-tight text-text-primary">
-            전통과 함께할 파트너를 찾습니다
-          </p>
-          <Link
-            to="/collaboration"
-            className="inline-flex min-h-[44px] items-center rounded-pill bg-surface px-6 py-3 text-base font-medium text-text-primary transition-shadow duration-fast hover:shadow-2"
-          >
-            협업 문의하기
-          </Link>
-        </Container>
-      </section>
     </main>
   );
 }

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { Link } from "react-router-dom";
 import { getArtisans } from "../api/artisans";
 import type { ArtisanSummary } from "../types/artisan";
 import Container from "../components/layout/Container";
@@ -132,11 +131,8 @@ export default function Artisans() {
               />
             )}
 
-            {/* 앞 카드 (링크) */}
-            <Link
-              to={`/artisans/${current.slug}`}
-              className="group absolute inset-0 z-10 flex flex-col overflow-hidden rounded-md bg-surface-muted shadow-2 transition-transform duration-fast active:scale-[0.99]"
-            >
+            {/* 앞 카드 — 상세는 새 도메인으로 재구축 예정, 현재는 비링크 */}
+            <div className="absolute inset-0 z-10 flex flex-col overflow-hidden rounded-md bg-surface-muted shadow-2">
               {current.profileImageUrl ? (
                 <img
                   src={current.profileImageUrl}
@@ -152,7 +148,7 @@ export default function Artisans() {
                 <span className="font-display text-lg font-bold">{current.name}</span>
                 <span className="text-sm text-text-muted">{current.title}</span>
               </span>
-            </Link>
+            </div>
           </div>
         ) : (
           <div className="z-10 flex h-[520px] w-[340px] items-center justify-center rounded-md bg-surface-muted text-sm text-text-muted">
@@ -204,7 +200,7 @@ export default function Artisans() {
         ) : (
           <>
             <p className="text-xs text-text-muted">
-              위/아래 화살표(또는 ↑ ↓ 버튼)로 보유자를 넘겨보세요 · 카드 클릭 시 상세로 이동
+              위/아래 화살표(또는 ↑ ↓ 버튼)로 보유자를 넘겨보세요
             </p>
             {hasNext && (
               <div className="mt-4">
@@ -222,9 +218,7 @@ export default function Artisans() {
             <ul>
               {items.map((a) => (
                 <li key={a.slug}>
-                  <Link to={`/artisans/${a.slug}`}>
-                    {a.name} {a.title} — {a.shortIntro}
-                  </Link>
+                  {a.name} {a.title} — {a.shortIntro}
                 </li>
               ))}
             </ul>

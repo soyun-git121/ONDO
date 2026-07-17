@@ -74,9 +74,9 @@ export default function ProductDetail() {
             Shop
           </Link>{" "}
           ›{" "}
-          <Link to={`/artisans/${data.artisan.slug}`} className="hover:underline underline-offset-4">
+          <span>
             {data.artisan.name} · {data.artisan.title}
-          </Link>{" "}
+          </span>{" "}
           › {data.name}
         </p>
       </Container>
@@ -125,11 +125,8 @@ export default function ProductDetail() {
             )}
             {data.summary && <p className="text-base text-text-muted">{data.summary}</p>}
 
-            {/* 보유자 연결 */}
-            <Link
-              to={`/artisans/${data.artisan.slug}`}
-              className="flex items-center gap-3 rounded-md border border-border-base p-4 transition-colors duration-fast hover:border-text-primary"
-            >
+            {/* 보유자 정보 — 상세는 새 도메인으로 재구축 예정, 현재는 비링크 */}
+            <div className="flex items-center gap-3 rounded-md border border-border-base p-4">
               {data.artisan.profileImageUrl ? (
                 <img
                   src={data.artisan.profileImageUrl}
@@ -148,7 +145,7 @@ export default function ProductDetail() {
                 </span>
                 <span className="text-sm text-text-muted">{data.artisan.shortIntro}</span>
               </span>
-            </Link>
+            </div>
 
             {/* 구매 / 문의 분기 */}
             {inquiryOnly ? (

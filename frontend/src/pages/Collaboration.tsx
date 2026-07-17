@@ -89,7 +89,7 @@ export default function Collaboration() {
             파트너를 찾습니다
           </h1>
           <p className="mt-6 max-w-2xl text-md text-text-muted">
-            기업 선물, 콜라보, 체험·강연, 공공 협력까지 — 보유자와 함께 만들 수 있는 일을
+            기업 선물, 콜라보, 체험·강연, 공공·기관 협력까지 — 보유자와 함께 만들 수 있는 일을
             제안해 주세요.
           </p>
         </Container>
@@ -98,6 +98,11 @@ export default function Collaboration() {
       {/* 문의 폼 */}
       <section className="pb-8 lg:pb-9">
         <Container className="max-w-2xl">
+          {/* blit 아이브로우 — ● 문의하기 (design.md) */}
+          <p className="mb-4 flex items-center gap-2 text-sm text-text-muted">
+            <span aria-hidden="true" className="h-2 w-2 rounded-pill bg-accent" />
+            문의하기
+          </p>
           {doneId ? (
             <div className="rounded-md border border-border-base bg-surface p-7 text-center">
               <h2 className="font-display text-xl font-bold">문의가 접수되었습니다</h2>
@@ -198,9 +203,14 @@ export default function Collaboration() {
         </Container>
       </section>
 
-      {/* featured 실적 — 설득 자료 */}
+      {/* featured 실적 — 설득 자료 (PROOF) */}
       <section className="pb-8 lg:pb-9">
         <Container>
+          {/* blit 아이브로우 — ● PROOF (design.md) */}
+          <p className="mb-3 flex items-center gap-2 text-sm text-text-muted">
+            <span aria-hidden="true" className="h-2 w-2 rounded-pill bg-accent" />
+            PROOF
+          </p>
           <SectionHeading title="온도가 만들어온 협업" to="/projects" linkLabel="전체 실적 보기" />
           {featured && featured.content.length > 0 ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -219,14 +229,6 @@ export default function Collaboration() {
           ) : (
             <EmptyBlock label="대표 실적 준비 중" className="h-48" />
           )}
-        </Container>
-      </section>
-
-      {/* 선행 사례 — 원고 확정 전 빈칸 */}
-      <section className="pb-8 lg:pb-9">
-        <Container>
-          <SectionHeading title="전통 협업의 가능성" />
-          <EmptyBlock label="선행 사례 콘텐츠 준비 중 (예올×샤넬 등)" className="h-40" />
         </Container>
       </section>
     </main>
