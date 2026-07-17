@@ -25,4 +25,7 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     /** admin 상세 — 공개 여부·타입 무관. */
     @EntityGraph(attributePaths = "artisan")
     Optional<News> findWithArtisanById(Long id);
+
+    /** 외부 뉴스 가져오기(import) 시 중복 방지. */
+    boolean existsByExternalUrl(String externalUrl);
 }

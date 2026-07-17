@@ -238,6 +238,13 @@ export default function OrderPage() {
                   </span>
                 </span>
               </div>
+              {/* 카드·간편결제는 Phase 4 전까지 비활성 (design 규칙) */}
+              <div
+                aria-disabled="true"
+                className="mt-3 rounded-sm bg-surface-muted p-4 text-sm text-text-muted"
+              >
+                카드 결제 · 간편결제 — 준비 중
+              </div>
             </section>
           </div>
 

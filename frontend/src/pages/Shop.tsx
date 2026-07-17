@@ -47,12 +47,11 @@ export default function Shop() {
 
   return (
     <main>
-      <Container className="pt-6">
-        <p className="text-sm text-text-muted">/shop — 상품 목록</p>
-        <h1 className="mt-1 font-display text-2xl font-bold leading-tight tracking-[-0.02em]">Shop</h1>
+      <Container className="pt-8 lg:pt-9">
+        <h1 className="font-display text-display font-bold leading-[1.05] tracking-[-0.02em]">Shop</h1>
       </Container>
 
-      <Container className="mt-6 flex flex-col gap-8 pb-8 lg:flex-row lg:pb-9">
+      <Container className="mt-8 flex flex-col gap-8 pb-8 lg:mt-9 lg:flex-row lg:pb-9">
         {/* ── 좌측 사이드바: 보유자 필터만 ── */}
         <aside className="shrink-0 lg:w-56">
           <h2 className="text-sm font-bold">보유자</h2>
@@ -93,7 +92,7 @@ export default function Shop() {
               보유자의 손끝, 온도
             </p>
             <p className="text-sm text-text-muted">
-              이 계절 온도가 추천하는 보유자의 작품 — 큐레이션 준비 중
+              이 계절 온도가 추천하는 보유자의 작품 — 이미지·큐레이션 준비 중
             </p>
           </div>
 

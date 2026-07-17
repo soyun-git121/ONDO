@@ -63,24 +63,26 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border-base bg-bg-base/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-3 lg:px-5">
+      <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-3 lg:h-20 lg:px-5">
         <Link to="/" aria-label="ONDO 홈으로">
-          <Logo className="h-6" />
+          <Logo className="h-6 lg:h-7" />
         </Link>
 
-        {/* 데스크톱 메뉴 */}
-        <nav aria-label="주 메뉴" className="hidden items-center gap-6 lg:flex">
-          {MENU.map((m) => (
-            <NavLink key={m.to} to={m.to} className={navLinkClass}>
-              {m.label}
-            </NavLink>
-          ))}
+        {/* 데스크톱 메뉴 — 좌: 주 메뉴 묶음 · 큰 간격 후 우: ● 협업문의 (design/figma) */}
+        <nav aria-label="주 메뉴" className="hidden items-center gap-8 lg:flex">
+          <div className="flex items-center gap-6">
+            {MENU.map((m) => (
+              <NavLink key={m.to} to={m.to} className={navLinkClass}>
+                {m.label}
+              </NavLink>
+            ))}
+          </div>
           {/* CTA — blit 'let's talk' 방식: accent 도트 + 텍스트 (design.md §1) */}
           <Link
             to="/collaboration"
             className="flex items-center gap-2 text-sm font-medium underline-offset-8 transition-colors duration-fast hover:underline"
           >
-            <span aria-hidden="true" className="h-2 w-2 rounded-pill bg-accent" />
+            <span aria-hidden="true" className="h-2.5 w-2.5 rounded-pill bg-accent" />
             협업문의
           </Link>
         </nav>

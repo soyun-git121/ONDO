@@ -111,10 +111,7 @@ export default function ProjectDetail() {
               <ul className="flex flex-col gap-3">
                 {data.artisans.map((a) => (
                   <li key={a.slug}>
-                    <Link
-                      to={`/artisans/${a.slug}`}
-                      className="flex items-center gap-3 rounded-md border border-border-base p-4 transition-colors duration-fast hover:border-text-primary"
-                    >
+                    <div className="flex items-center gap-3 rounded-md border border-border-base p-4">
                       {a.profileImageUrl ? (
                         <img
                           src={a.profileImageUrl}
@@ -132,7 +129,7 @@ export default function ProjectDetail() {
                         </span>
                         {a.role && <span className="text-sm text-text-muted">{a.role}</span>}
                       </span>
-                    </Link>
+                    </div>
                   </li>
                 ))}
               </ul>

@@ -29,9 +29,9 @@ export default function News() {
 
   return (
     <main>
-      <section className="py-8 lg:py-9">
+      <section className="pb-6 pt-8 lg:pt-9">
         <Container>
-          <h1 className="font-display text-2xl font-bold leading-tight tracking-[-0.02em]">News</h1>
+          <h1 className="font-display text-display font-bold leading-[1.05] tracking-[-0.02em]">News</h1>
           <p className="mt-4 max-w-xl text-md text-text-muted">
             온도와 전통문화의 소식을 전합니다.
           </p>

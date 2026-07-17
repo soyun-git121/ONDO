@@ -8,7 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** 홈 통합 데이터 API. api.md §1. */
+/**
+ * 홈 통합 API. api.md §1.
+ * 응답은 ApiResponse<T> 래핑, try-catch 금지(GlobalExceptionHandler 위임) — claude.md.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/home")
