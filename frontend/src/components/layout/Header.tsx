@@ -2,12 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import Logo from "../ui/Logo";
 
+// Figma foundation "Header / global"(239:43) nav — 로고 + 6개 평범 항목(도트 CTA 없음).
+// 라벨은 Figma 시안 그대로: 보유자 메뉴는 영문 'Holder'(푸터는 '보유자' 유지).
 const MENU = [
   { to: "/about", label: "About" },
-  { to: "/artisans", label: "보유자" },
+  { to: "/artisans", label: "Holder" },
   { to: "/shop", label: "Shop" },
   { to: "/projects", label: "Project" },
   { to: "/news", label: "News" },
+  { to: "/collaboration", label: "협업문의" },
 ];
 
 /**
@@ -20,6 +23,8 @@ export default function Header() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const location = useLocation();
+  // 모든 페이지 헤더 하단 구분선 없음(Figma). 홈은 로고 없이 nav만 사용.
+  const isHome = location.pathname === "/";
 
   // 라우트 이동 시 오버레이 닫기
   useEffect(() => setOpen(false), [location.pathname]);
@@ -62,29 +67,25 @@ export default function Header() {
     }`;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border-base bg-bg-base/95 backdrop-blur">
+    <header className="sticky top-0 z-40 bg-bg-base/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-3 lg:h-20 lg:px-5">
-        <Link to="/" aria-label="ONDO 홈으로">
-          <Logo className="h-6 lg:h-7" />
-        </Link>
-
-        {/* 데스크톱 메뉴 — 좌: 주 메뉴 묶음 · 큰 간격 후 우: ● 협업문의 (design/figma) */}
-        <nav aria-label="주 메뉴" className="hidden items-center gap-8 lg:flex">
-          <div className="flex items-center gap-6">
-            {MENU.map((m) => (
-              <NavLink key={m.to} to={m.to} className={navLinkClass}>
-                {m.label}
-              </NavLink>
-            ))}
-          </div>
-          {/* CTA — blit 'let's talk' 방식: accent 도트 + 텍스트 (design.md §1) */}
-          <Link
-            to="/collaboration"
-            className="flex items-center gap-2 text-sm font-medium underline-offset-8 transition-colors duration-fast hover:underline"
-          >
-            <span aria-hidden="true" className="h-2.5 w-2.5 rounded-pill bg-accent" />
-            협업문의
+        {/* 홈(Figma 와이어프레임)은 헤더에서 nav만 사용 — 대형 로고는 히어로에 별도 배치.
+            그 외 페이지는 로고 + nav. (justify-between 유지 위해 홈에서도 좌측 슬롯은 빈칸) */}
+        {isHome ? (
+          <div aria-hidden="true" />
+        ) : (
+          <Link to="/" aria-label="ONDO 홈으로">
+            <Logo className="h-6 lg:h-7" />
           </Link>
+        )}
+
+        {/* 데스크톱 메뉴 — Figma: 우측 정렬 단일 nav, 항목 간격 40px */}
+        <nav aria-label="주 메뉴" className="hidden items-center gap-x-10 lg:flex">
+          {MENU.map((m) => (
+            <NavLink key={m.to} to={m.to} className={navLinkClass}>
+              {m.label}
+            </NavLink>
+          ))}
         </nav>
 
         {/* 모바일 햄버거 */}
@@ -125,12 +126,6 @@ export default function Header() {
               {m.label}
             </NavLink>
           ))}
-          <Link
-            to="/collaboration"
-            className="mt-4 inline-flex w-fit rounded-pill bg-primary px-6 py-3 text-base font-medium text-text-primary"
-          >
-            협업문의
-          </Link>
         </div>
       )}
     </header>
