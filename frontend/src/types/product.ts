@@ -10,6 +10,14 @@ export const PRODUCT_CATEGORY_LABEL: Record<ProductCategory, string> = {
   GOODS: "소품",
 };
 
+/** 관리자 화면 표기 — 공개 화면은 status를 노출하지 않는다. */
+export const PRODUCT_STATUS_LABEL: Record<ProductStatus, string> = {
+  ON_SALE: "판매중",
+  SOLD_OUT: "품절",
+  INQUIRY_ONLY: "문의 전용",
+  HIDDEN: "숨김",
+};
+
 /** GET /api/products content 항목 */
 export interface ProductSummary {
   id: number;

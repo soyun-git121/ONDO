@@ -17,6 +17,19 @@ export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
   CANCELLED: "취소됨",
 };
 
+/** 관리자 목록·상세의 상태 배지 색. */
+export const ORDER_STATUS_TONE: Record<
+  OrderStatus,
+  "positive" | "neutral" | "warning" | "danger"
+> = {
+  PENDING: "warning",
+  PAID: "positive",
+  PREPARING: "positive",
+  SHIPPED: "positive",
+  DELIVERED: "neutral",
+  CANCELLED: "danger",
+};
+
 export interface OrderCreateRequest {
   ordererName: string;
   phone: string;
