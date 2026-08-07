@@ -32,7 +32,7 @@ class AdminOrderInquiryTest {
     private int createOrder() throws Exception {
         String json = """
                 { "ordererName":"홍길동", "phone":"010-1234-5678", "zipcode":"03187",
-                  "address":"서울", "items":[{"productId":1,"quantity":2}] }
+                  "address":"서울", "items":[{"productId":3,"quantity":2}] }
                 """;
         String body = mockMvc.perform(post("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON).content(json))
@@ -70,21 +70,21 @@ class AdminOrderInquiryTest {
     }
 
     @Test
-    @DisplayName("주문 취소 → 재고 복원 (18 → 20)")
+    @DisplayName("주문 취소 → 재고 복원 (8 → 10)")
     void cancelRestoresStock() throws Exception {
         String token = token();
-        int id = createOrder(); // mini-buk 재고 20 → 18
+        int id = createOrder(); // 미니 장구 오브제 재고 10 → 8
 
-        mockMvc.perform(get("/api/products/mini-buk"))
-                .andExpect(jsonPath("$.data.stockQuantity").value(18));
+        mockMvc.perform(get("/api/products/mini-janggu-object"))
+                .andExpect(jsonPath("$.data.stockQuantity").value(8));
 
         mockMvc.perform(patch("/api/admin/orders/{id}/status", id)
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"CANCELLED\"}"))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/products/mini-buk"))
-                .andExpect(jsonPath("$.data.stockQuantity").value(20));
+        mockMvc.perform(get("/api/products/mini-janggu-object"))
+                .andExpect(jsonPath("$.data.stockQuantity").value(10));
     }
 
     @Test

@@ -35,7 +35,7 @@ class ArtisanApiTest {
     }
 
     @Test
-    @DisplayName("GET /api/artisans/{slug} — 상세 + 갤러리 반환, products/projects는 빈 배열")
+    @DisplayName("GET /api/artisans/{slug} — 상세 + 갤러리·상품·참여 실적 반환")
     void getArtisanDetail() throws Exception {
         mockMvc.perform(get("/api/artisans/yoon-jongguk"))
                 .andExpect(status().isOk())
@@ -45,7 +45,7 @@ class ArtisanApiTest {
                 .andExpect(jsonPath("$.data.images.length()").value(2))
                 .andExpect(jsonPath("$.data.images[0].caption").value("공방 전경"))
                 .andExpect(jsonPath("$.data.products").isArray())
-                .andExpect(jsonPath("$.data.products.length()").value(2))
+                .andExpect(jsonPath("$.data.products.length()").value(3))
                 .andExpect(jsonPath("$.data.projects[0].slug").value("tumblbug-buk"));
     }
 
