@@ -23,6 +23,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * 상품(Product) — 보유자에 종속. db_schema.md §3 / api.md §3.
@@ -52,6 +54,7 @@ public class Product extends BaseTimeEntity {
     private String name;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     private ProductCategory category;
 
@@ -71,6 +74,7 @@ public class Product extends BaseTimeEntity {
     private int stockQuantity;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     private ProductStatus status;
 

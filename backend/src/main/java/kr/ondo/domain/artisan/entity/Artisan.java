@@ -20,6 +20,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * 보유자(Artisan) — 핵심 도메인(1급 객체). db_schema.md §1 / api.md §2.
@@ -47,6 +49,7 @@ public class Artisan extends BaseTimeEntity {
     private String title; // 종목 (악기장)
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     private Designation designation;
 

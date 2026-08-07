@@ -20,6 +20,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * 협업 실적(Project) — 쇼케이스. db_schema.md §8 / api.md §6.
@@ -45,6 +47,7 @@ public class Project extends BaseTimeEntity {
     private String title;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     private ProjectType type;
 

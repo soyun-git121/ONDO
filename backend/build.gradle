@@ -34,7 +34,11 @@ dependencies {
 
     // DB
     runtimeOnly 'com.h2database:h2'                    // dev
-    runtimeOnly 'com.mysql:mysql-connector-j'          // prod
+    runtimeOnly 'com.mysql:mysql-connector-j'          // local/prod
+
+    // 스키마 마이그레이션 — local/prod(MySQL)에서만 실행, dev(H2)는 비활성 (application.yml)
+    implementation 'org.flywaydb:flyway-core'
+    runtimeOnly 'org.flywaydb:flyway-mysql'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
