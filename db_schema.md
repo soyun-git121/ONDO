@@ -323,7 +323,8 @@ cd backend && ./gradlew bootRun --args='--spring.profiles.active=local'
 ## 운영 노트
 
 - 관리자 계정: `ondo.admin.bootstrap-password`(env `ADMIN_PASSWORD`)가 설정돼 있을 때만 생성된다.
-  dev/local은 `admin` / `admin1234`, 운영은 배포 시 1회 주입 후 환경변수에서 제거한다.
+  설정된 값이 곧 로그인 비밀번호다(변경 화면 없음) — 로컬은 `backend/.env`, 운영은 `ADMIN_PASSWORD` 환경변수.
+  소스에 비밀번호를 커밋하지 않는다.
   이미 같은 username이 있으면 건드리지 않아 비밀번호를 덮어쓰지 않는다.
 - 재고 차감: 주문 생성 시 `UPDATE ... SET stock_quantity = stock_quantity - ? WHERE stock_quantity >= ?` (조건부 UPDATE로 동시성 처리, 결제 보류 단계에선 이 정도로 충분)
 - 백업: 운영 DB는 관리형 서비스의 자동 백업(스냅샷)에 의존한다. 애플리케이션에는 백업 로직을 두지 않는다.

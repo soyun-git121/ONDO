@@ -37,7 +37,7 @@ cd backend
 
 - 확인: http://localhost:8080/api/health
 - H2 콘솔: http://localhost:8080/h2-console (JDBC URL: `jdbc:h2:mem:ondo`, user: `sa`)
-- 관리자: `admin` / `admin1234`
+- 관리자: 아이디 `admin`, 비밀번호는 `backend/.env`의 `ADMIN_PASSWORD` 값 (gitignored)
 
 기본 `dev` 프로파일은 H2 인메모리라 **앱을 끄면 데이터가 사라진다.** 데이터를 유지하거나 배포 전 검증이 필요하면 아래 `local`을 쓴다.
 
@@ -90,7 +90,9 @@ npm run dev
 
 콘텐츠 등록·수정은 전부 여기서 한다 (DB를 직접 만질 필요 없음).
 
-- 주소: http://localhost:5173/admin — dev/local 계정은 `admin` / `admin1234`
+- 주소: http://localhost:5173/admin — 아이디 `admin`, 비밀번호는 `backend/.env`의 `ADMIN_PASSWORD`
+- 비밀번호는 이 설정값이 곧 로그인 값이다(변경 화면 없음). 부팅 때 계정이 없으면 만들고, 있으면 이 값으로 맞춘다.
+  로컬은 `backend/.env`(gitignored), 운영은 `ADMIN_PASSWORD` 환경변수로 넣는다 — 소스에 비밀번호를 커밋하지 않는다.
 - 보유자·상품·뉴스·협업 실적 CRUD, 문의 처리, 주문 상태 관리, 이미지 업로드
 - 공개 사이트와 라우트만 공유하고 레이아웃은 분리돼 있다 (`src/pages/admin`, `src/components/admin`)
 

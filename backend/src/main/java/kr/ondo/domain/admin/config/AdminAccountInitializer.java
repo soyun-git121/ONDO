@@ -11,10 +11,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
- * 관리자 계정 부트스트랩. 비밀번호는 설정값(`ondo.admin.bootstrap-password`)으로만 주입한다.
- * — dev/local: application.yml이 개발용 기본값(admin1234)을 넣어준다.
- * — prod: 값이 비어 있으면 계정을 만들지 않는다. 배포 시 ADMIN_PASSWORD 환경변수로 1회 주입 후 제거.
- * 이미 같은 username이 있으면 아무것도 하지 않아 비밀번호를 덮어쓰지 않는다.
+ * 관리자 계정 부트스트랩. 비밀번호는 설정값(`ondo.admin.bootstrap-password`)이 권위를 갖는다 —
+ * 별도의 비밀번호 변경 화면 없이, 설정된 값이 곧 로그인 비밀번호다.
+ * <p>실제 값은 저장소에 두지 않는다: 로컬은 gitignore된 backend/.env, 운영은 ADMIN_PASSWORD 환경변수.
+ * 값이 비어 있으면(운영 기본값) 아무것도 하지 않는다.
+ * <p>부팅 때마다 계정이 없으면 만들고, 있으면 비밀번호가 설정값과 다를 때만 맞춘다.
  */
 @Slf4j
 @Component
@@ -39,10 +40,21 @@ public class AdminAccountInitializer implements ApplicationRunner {
             log.info("ondo.admin.bootstrap-password 미설정 — 관리자 계정 부트스트랩을 건너뜁니다.");
             return;
         }
-        if (adminUserRepository.existsByUsername(username)) {
-            return;
-        }
-        adminUserRepository.save(AdminUser.create(username, passwordEncoder.encode(password), name, "ADMIN"));
-        log.info("관리자 계정 생성: {}", username);
+
+        adminUserRepository.findByUsername(username).ifPresentOrElse(
+                existing -> {
+                    // 설정된 비밀번호와 다르면 맞춘다(설정값이 권위). ApplicationRunner는 트랜잭션
+                    // 밖이라 더티 체킹이 안 되므로 save로 명시 반영.
+                    if (!passwordEncoder.matches(password, existing.getPassword())) {
+                        existing.changePassword(passwordEncoder.encode(password));
+                        adminUserRepository.save(existing);
+                        log.info("관리자 비밀번호를 설정값으로 갱신: {}", username);
+                    }
+                },
+                () -> {
+                    adminUserRepository.save(
+                            AdminUser.create(username, passwordEncoder.encode(password), name, "ADMIN"));
+                    log.info("관리자 계정 생성: {}", username);
+                });
     }
 }
