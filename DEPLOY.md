@@ -59,20 +59,27 @@ $bytes = New-Object byte[] 48; [System.Security.Cryptography.RandomNumberGenerat
 3. 설정:
    - **Root Directory**: `frontend` (반드시 지정)
    - Framework는 Vite로 자동 인식 (`frontend/vercel.json`이 SPA 라우팅까지 처리)
-4. **Environment Variables**에 추가:
-
-| Key | Value |
-|---|---|
-| `VITE_API_BASE_URL` | Render 주소 (예: `https://ondo-api.onrender.com`) — **끝에 `/` 없이** |
+4. **`frontend/vercel.json`의 백엔드 주소를 자기 Render 주소로 바꾼다** (rewrites 2곳).
 
 5. Deploy → 주소가 나온다 (예: `https://ondo.vercel.app`)
 
-## 4. 마지막 연결 — CORS
+## 4. API 연결 방식 — Vercel 리라이트 프록시
 
-Render로 돌아가서 `CORS_ALLOWED_ORIGINS`에 **3번에서 받은 Vercel 주소**를 넣고 저장(자동 재배포).
+`frontend/vercel.json`이 `/api/*`와 `/uploads/*` 요청을 Render로 대신 전달한다:
 
-> 이 값이 없으면 브라우저가 관리자 API 호출을 막는다. 여러 개면 쉼표로 구분.
-> Vercel 미리보기 배포까지 허용하려면 패턴도 가능: `https://ondo.vercel.app,https://*.vercel.app`
+```json
+{ "source": "/api/:path*", "destination": "https://<render주소>/api/:path*" }
+```
+
+이 방식을 쓰는 이유:
+
+- **CORS 설정이 필요 없다** — 브라우저에는 프론트와 같은 도메인으로 보인다.
+- **빌드 시점 환경변수가 필요 없다** — Vite는 `VITE_*`를 빌드할 때 코드에 박아 넣기 때문에,
+  값을 나중에 추가하면 재배포(캐시 미사용)를 해야만 반영된다. 이 함정을 아예 없앤다.
+- 업로드 이미지도 같은 경로로 해결된다.
+
+> 백엔드 주소가 바뀌면 `vercel.json`만 고치면 된다.
+> (`VITE_API_BASE_URL`을 설정하면 그 값이 우선하지만, 이 구성에서는 설정하지 않는다.)
 
 ## 5. 접속
 
