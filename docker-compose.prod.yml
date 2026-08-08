@@ -1,0 +1,64 @@
+# 운영 배포용 — VM(예: Oracle Cloud) 1대에 사이트 전체를 올린다.
+# 사용:  docker compose -f docker-compose.prod.yml up -d --build
+# 값은 같은 폴더의 .env(gitignored)에서 읽는다. .env.prod.example 참고.
+#
+# 로컬 개발용 docker-compose.yml(MySQL만, 3307)과 별개 파일이다 — 섞이지 않게 -f로 지정.
+# 별도 프로젝트명으로 개발 스택과 볼륨·컨테이너를 완전 격리(개발 MySQL 볼륨 공유 방지).
+name: ondo-prod
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ondo-backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      # 같은 compose 네트워크 안에서 mysql 서비스명으로 접속(내부 포트 3306).
+      DB_URL: jdbc:mysql://mysql:3306/ondo?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      DB_USERNAME: ${MYSQL_USER:-ondo}
+      DB_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD 필요}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET 필요}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD 필요}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      NAVER_CLIENT_ID: ${NAVER_CLIENT_ID:-}
+      NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET:-}
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      # 업로드 이미지 영속 — 재배포해도 안 사라진다.
+      - ondo-uploads:/app/uploads
+    ports:
+      # 사이트를 http://<서버IP> (80번)로 노출. 8080은 컨테이너 내부 포트.
+      - "80:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.4
+    container_name: ondo-mysql-prod
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD 필요}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-ondo}
+      MYSQL_USER: ${MYSQL_USER:-ondo}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD 필요}
+      TZ: Asia/Seoul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+09:00
+    volumes:
+      - ondo-mysql-data:/var/lib/mysql
+    # DB 포트는 외부로 열지 않는다 — 백엔드만 내부 네트워크로 접속(공격면 축소).
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+volumes:
+  ondo-mysql-data:
+  ondo-uploads:
