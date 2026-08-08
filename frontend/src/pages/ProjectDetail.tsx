@@ -6,6 +6,7 @@ import EmptyBlock from "../components/ui/EmptyBlock";
 import Skeleton from "../components/ui/Skeleton";
 import Markdown from "../components/ui/Markdown";
 import { PROJECT_TYPE_LABEL } from "../types/project";
+import { resolveImageUrl } from "../api/client";
 
 /**
  * 실적 상세 — architecture.md §5: 배경 → 진행 → 결과(성과 지표 강조) → 참여 보유자 → 협업문의 CTA.
@@ -66,7 +67,7 @@ export default function ProjectDetail() {
         <section className="pb-8 lg:pb-9">
           <Container className="max-w-2xl">
             {data.thumbnailUrl ? (
-              <img src={data.thumbnailUrl} alt={data.title} className="w-full rounded-md object-cover" />
+              <img src={resolveImageUrl(data.thumbnailUrl)} alt={data.title} className="w-full rounded-md object-cover" />
             ) : (
               <EmptyBlock label="대표 이미지 준비 중" className="h-64" />
             )}
@@ -88,7 +89,7 @@ export default function ProjectDetail() {
                 {data.images.map((img) => (
                   <figure key={img.sortOrder} className="overflow-hidden rounded-md bg-surface-muted">
                     <img
-                      src={img.imageUrl}
+                      src={resolveImageUrl(img.imageUrl)}
                       alt={img.caption ?? data.title}
                       loading="lazy"
                       className="aspect-square w-full object-cover"
@@ -114,7 +115,7 @@ export default function ProjectDetail() {
                     <div className="flex items-center gap-3 rounded-md border border-border-base p-4">
                       {a.profileImageUrl ? (
                         <img
-                          src={a.profileImageUrl}
+                          src={resolveImageUrl(a.profileImageUrl)}
                           alt={`${a.name} ${a.title}`}
                           className="h-12 w-12 rounded-pill object-cover"
                         />

@@ -1,129 +1,97 @@
-# ONDO 배포 가이드 — Oracle Cloud 무료 VM
+# ONDO 배포 가이드 — Vercel + Render + Aiven
 
-서버 1대에 docker-compose로 사이트 전체(프론트+백엔드+MySQL)를 올린다.
-프론트는 백엔드 jar에 번들되어 **한 주소(포트 80)**로 서비스된다 — CORS 설정이 필요 없다.
+프론트/백엔드/DB를 각각 무료 서비스에 올린다. 서버 관리(SSH·방화벽)가 없다.
 
-로컬에서 운영 이미지 빌드·기동·업로드 영속까지 검증 완료된 구성이다.
+| 구성 | 서비스 | 비고 |
+|---|---|---|
+| 프론트 (React) | **Vercel** | 정적 배포, 빠름 |
+| 백엔드 (Spring Boot) | **Render** | 무료, 15분 미접속 시 잠듦(다음 접속 30~60초) |
+| DB (MySQL) | **Aiven** | 항상 무료 1GB |
+
+> 한 서버에 전부 올리는 방식(Oracle VM 등)을 원하면 루트의 `Dockerfile` +
+> `docker-compose.prod.yml`을 쓰면 된다. 그 경우 프론트가 백엔드에 번들되어 CORS 설정이 필요 없다.
 
 ---
 
-## 0. 준비물
+## 1. Aiven — MySQL 만들기
 
-- Oracle Cloud 계정 (무료, 카드는 본인확인용 — 무료 자원은 과금 안 됨)
-- 이 저장소 주소 (GitHub)
+1. [aiven.io](https://aiven.io) 가입 (카드 불필요)
+2. **Create service → MySQL → Free plan** 선택, 리전은 아무거나(가까운 곳)
+3. 생성 후 **Connection information**에서 아래 값을 복사해 둔다:
+   - Host, Port, Database, User, Password
 
-## 1. Oracle Cloud VM 만들기
+JDBC URL은 이렇게 조립한다 (Aiven은 SSL 필수):
+```
+jdbc:mysql://<HOST>:<PORT>/<DATABASE>?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&sslMode=REQUIRED
+```
 
-1. [cloud.oracle.com](https://cloud.oracle.com) 가입 → 콘솔 로그인
-2. **Compute → Instances → Create Instance**
+## 2. Render — 백엔드 배포
+
+1. [render.com](https://render.com) 가입 → GitHub 연결
+2. **New → Web Service** → 이 저장소 선택
 3. 설정:
-   - **Image**: Ubuntu 22.04 (또는 24.04)
-   - **Shape**: `VM.Standard.A1.Flex` (Ampere ARM, **Always Free**) — OCPU 2, 메모리 12GB 정도로. (이 Shape가 무료 한도 안에서 가장 넉넉하다. 안 잡히면 리전을 바꿔 재시도)
-   - **SSH 키**: "Generate a key pair" 선택 → **개인키 다운로드**(로그인에 필요, 잘 보관)
-4. Create → 몇 분 뒤 인스턴스의 **Public IP** 확인 (예: `140.238.x.x`)
+   - **Root Directory**: `backend`
+   - **Runtime**: `Docker` (backend/Dockerfile 자동 인식)
+   - **Instance Type**: Free
+4. **Environment** 탭에서 환경변수 추가:
 
-## 2. 포트 80 열기 (두 군데 다 해야 함 — Oracle의 대표적 함정)
+| Key | Value |
+|---|---|
+| `DB_URL` | 위에서 조립한 JDBC URL |
+| `DB_USERNAME` | Aiven User |
+| `DB_PASSWORD` | Aiven Password |
+| `JWT_SECRET` | 아래 명령으로 생성 |
+| `ADMIN_PASSWORD` | 관리자 로그인 비밀번호 |
+| `CORS_ALLOWED_ORIGINS` | (3번 후) Vercel 주소, 예: `https://ondo.vercel.app` |
 
-### (a) OCI 보안 목록
-- 인스턴스 → **Virtual Cloud Network → Security Lists → Default Security List**
-- **Add Ingress Rule**:
-  - Source CIDR: `0.0.0.0/0`
-  - IP Protocol: TCP, Destination Port: `80`
-
-### (b) 인스턴스 내부 방화벽 (Ubuntu는 iptables가 기본 차단)
-서버에 SSH 접속(아래 3번) 후:
-```bash
-sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
-sudo netfilter-persistent save
+JWT_SECRET 생성 (Windows PowerShell):
+```powershell
+$bytes = New-Object byte[] 48; [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes); [Convert]::ToBase64String($bytes)
 ```
 
-## 3. 서버 접속 & Docker 설치
+5. Deploy → 완료되면 주소가 나온다 (예: `https://ondo-api.onrender.com`)
+   - 확인: `https://<render주소>/api/health` → `{"status":"UP"...}`
 
-로컬 터미널에서 (다운로드한 개인키로):
-```bash
-ssh -i <개인키경로> ubuntu@<Public-IP>
-```
+## 3. Vercel — 프론트 배포
 
-접속 후 Docker 설치:
-```bash
-curl -fsSL https://get.docker.com | sudo sh
-sudo usermod -aG docker ubuntu
-exit
-```
-(그룹 적용을 위해 한 번 나갔다) 다시 접속:
-```bash
-ssh -i <개인키경로> ubuntu@<Public-IP>
-docker --version   # 확인
-```
+1. [vercel.com](https://vercel.com) 가입 → GitHub 연결
+2. **Add New → Project** → 이 저장소 선택
+3. 설정:
+   - **Root Directory**: `frontend` (반드시 지정)
+   - Framework는 Vite로 자동 인식 (`frontend/vercel.json`이 SPA 라우팅까지 처리)
+4. **Environment Variables**에 추가:
 
-## 4. 코드 내려받기
+| Key | Value |
+|---|---|
+| `VITE_API_BASE_URL` | Render 주소 (예: `https://ondo-api.onrender.com`) — **끝에 `/` 없이** |
 
-```bash
-git clone <이-저장소-URL> ondo
-cd ondo
-```
+5. Deploy → 주소가 나온다 (예: `https://ondo.vercel.app`)
 
-## 5. 환경변수 파일 만들기
+## 4. 마지막 연결 — CORS
 
-```bash
-cp .env.prod.example .env
-nano .env
-```
-값을 채운다 (특히 아래 4개는 필수):
-```
-MYSQL_ROOT_PASSWORD=<강한 비번>
-MYSQL_PASSWORD=<강한 비번>
-JWT_SECRET=<아래 명령으로 생성>
-ADMIN_PASSWORD=admin2580
-```
-JWT_SECRET 생성 (서버에서 바로):
-```bash
-openssl rand -base64 48
-```
-나온 값을 `.env`의 `JWT_SECRET=`에 붙여넣고 저장(nano: Ctrl+O, Enter, Ctrl+X).
+Render로 돌아가서 `CORS_ALLOWED_ORIGINS`에 **3번에서 받은 Vercel 주소**를 넣고 저장(자동 재배포).
 
-> `.env`는 서버에만 두고 절대 커밋하지 않는다(이미 gitignore됨).
+> 이 값이 없으면 브라우저가 관리자 API 호출을 막는다. 여러 개면 쉼표로 구분.
+> Vercel 미리보기 배포까지 허용하려면 패턴도 가능: `https://ondo.vercel.app,https://*.vercel.app`
 
-## 6. 실행
+## 5. 접속
 
-```bash
-docker compose -f docker-compose.prod.yml up -d --build
-```
-- 첫 빌드는 몇 분 걸린다(프론트+백엔드 빌드). ARM 서버에서 네이티브로 빌드된다.
-- 진행 확인: `docker compose -f docker-compose.prod.yml logs -f backend`
-  `Started OndoApplication` 나오면 완료.
+- 사이트: `https://<vercel주소>/`
+- 관리자: `https://<vercel주소>/admin` (admin / `ADMIN_PASSWORD`에 넣은 값)
 
-## 7. 접속
-
-- 사이트: `http://<Public-IP>/`
-- 관리자: `http://<Public-IP>/admin` (admin / `.env`의 ADMIN_PASSWORD)
-
-운영 DB는 시드가 없어 처음엔 콘텐츠가 비어 있다. **관리자 화면에서 보유자·상품·뉴스·실적을 등록**하면 사이트에 노출된다.
+운영 DB는 시드가 없어 처음엔 비어 있다. **관리자 화면에서 콘텐츠를 등록**하면 사이트에 노출된다.
 
 ---
 
-## 운영 명령 모음
+## 알아둘 점
 
-```bash
-# 상태
-docker compose -f docker-compose.prod.yml ps
+- **콜드 스타트**: Render 무료는 15분 미접속 시 잠든다. 다음 방문자가 깨우는 데 30~60초 걸린다(Java라 느린 편).
+- **업로드 이미지가 사라진다**: Render 무료는 디스크가 재배포마다 초기화된다. 관리자에서 파일 업로드 대신
+  **이미지 URL 붙여넣기**를 쓰는 것을 권장. (영구 저장이 필요해지면 Cloudflare R2 등 외부 스토리지 연동)
+- **DB 백업**: Aiven 무료 플랜도 자동 백업이 있다. 콘솔에서 확인.
+- **코드 수정 후 재배포**: GitHub에 push하면 Render·Vercel이 자동으로 다시 배포한다.
 
-# 로그
-docker compose -f docker-compose.prod.yml logs -f backend
+## 로컬 개발은 그대로
 
-# 코드 업데이트 후 재배포 (git pull → 재빌드)
-git pull
-docker compose -f docker-compose.prod.yml up -d --build
-
-# 중지 / 재시작
-docker compose -f docker-compose.prod.yml stop
-docker compose -f docker-compose.prod.yml up -d
-```
-
-- 업로드 이미지·DB는 Docker 볼륨(`ondo-prod_ondo-uploads`, `ondo-prod_ondo-mysql-data`)에 남아 재배포해도 유지된다.
-- **DB 백업**: `docker exec ondo-mysql-prod mysqldump -u root -p<루트비번> ondo > backup-$(date +%F).sql`
-
-## 다음 단계 (지금은 선택)
-
-- **도메인 연결**: 도메인을 사서 A 레코드를 Public IP로 지정.
-- **HTTPS**: 도메인 연결 후 Caddy나 nginx+Let's Encrypt로 443 인증서. (필요할 때 구성 도와줄 수 있음)
+로컬은 `VITE_API_BASE_URL`을 설정하지 않는다 — vite 프록시(`/api` → localhost:8080)로 동작하므로
+CORS 설정도 필요 없다. 자세한 실행 방법은 [README.md](README.md) 참고.

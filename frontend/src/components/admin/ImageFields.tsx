@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { uploadImage } from "../../api/admin";
+import { resolveImageUrl } from "../../api/client";
 import type { AdminImageItem } from "../../types/admin";
 import { Field, Input } from "./Form";
 
@@ -32,7 +33,7 @@ function Preview({ url }: { url: string }) {
   if (!url || failed) return null;
   return (
     <img
-      src={url}
+      src={resolveImageUrl(url)}
       alt=""
       onError={() => setFailed(true)}
       className="h-20 w-20 shrink-0 rounded-sm border border-border-base object-cover"

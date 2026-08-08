@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
-import { Link } from "react-router-dom";
 import { getNewsList } from "../api/news";
 import { useFetch } from "../hooks/useFetch";
 import { NEWS_CATEGORY_LABEL, type NewsSummary } from "../types/news";
 import EmptyBlock from "../components/ui/EmptyBlock";
+import NewsLink from "../components/news/NewsLink";
 import Logo from "../components/ui/Logo";
+import FitCanvas from "../components/ui/FitCanvas";
+import { resolveImageUrl } from "../api/client";
 
 /**
  * 홈 — Figma 107:80 "05 홈 / Desktop / Wireframe (blit)" 충실 이식.
@@ -28,34 +30,10 @@ function Eyebrow({ children, className = "" }: { children: ReactNode; className?
   );
 }
 
-/** 뉴스 링크 래퍼 — CURATED(외부 기사)는 새 탭, ORIGINAL은 상세로 (api.md §5) */
-function NewsLink({
-  news,
-  className,
-  children,
-}: {
-  news: NewsSummary;
-  className?: string;
-  children: ReactNode;
-}) {
-  if (news.type === "CURATED" && news.externalUrl) {
-    return (
-      <a href={news.externalUrl} target="_blank" rel="noopener noreferrer" className={className}>
-        {children}
-      </a>
-    );
-  }
-  return (
-    <Link to={`/news/${news.id}`} className={className}>
-      {children}
-    </Link>
-  );
-}
-
 function NewsMedia({ news, className }: { news: NewsSummary; className: string }) {
   return news.thumbnailUrl ? (
     <img
-      src={news.thumbnailUrl}
+      src={resolveImageUrl(news.thumbnailUrl)}
       alt={news.title}
       loading="lazy"
       className={`rounded-md bg-surface-muted object-cover ${className}`}
@@ -89,7 +67,16 @@ export default function Home() {
     return (
       <NewsLink news={item} className={`group block ${posClass}`}>
         <Eyebrow>News+</Eyebrow>
-        <span className="mt-2 block text-lg font-bold leading-snug group-hover:underline">
+        {/*
+          line-clamp-2 필수 — 슬롯은 절대좌표라 높이가 고정인데, 제목을 안 접으면
+          기사 제목 길이에 따라 슬롯이 늘어나 캔버스 아래(=푸터)를 침범한다.
+          우측 슬롯은 폭이 278px뿐이라 3~4줄까지 늘어난다.
+
+          block을 같이 쓰면 안 된다 — line-clamp는 display:-webkit-box일 때만 동작하는데
+          Tailwind 생성 순서상 .block(798행)이 .line-clamp-2(792행)보다 뒤라 display를 덮어써
+          클램프가 통째로 무효가 된다. -webkit-box 자체가 블록 레벨이라 block은 불필요.
+        */}
+        <span className="mt-2 line-clamp-2 text-lg font-bold leading-snug group-hover:underline">
           {item.title}
         </span>
         <NewsMedia news={item} className={`mt-3 ${mediaClass}`} />
@@ -102,7 +89,12 @@ export default function Home() {
     <main>
       {/* ═══════════ 데스크톱/노트북 (≥1280): Figma 절대 좌표 1:1 캔버스 ═══════════ */}
       <section className="hidden xl:block">
-        <div className="relative mx-auto h-[3080px] max-w-[1280px]">
+        {/*
+          h=2915 — 콘텐츠 최하단(우 뉴스 슬롯 2905) + 여유 10.
+          여유를 10 아래로 더 줄이면 제목 줄높이 반올림 오차에 먹혀 푸터에 붙는다.
+          기존 3080은 우 슬롯이 623일 때 기준이었다. 슬롯 높이를 바꾸면 이 값도 같이 조정할 것.
+        */}
+        <FitCanvas w={1280} h={2915}>
           {/* 대형 ONDO 워드마크 — figma 253:749 (logo.svg, 560×187) */}
           <Logo className="absolute left-[-6px] top-0 h-[187px] w-[560px] object-contain object-left-top" />
 
@@ -138,12 +130,12 @@ export default function Home() {
           </h1>
           {/* 본문 — figma 193:4 */}
           <p className="absolute left-[620px] top-[907px] w-[700px] text-base leading-base text-text-muted">
-            ONDO는 무형문화재 보유자가 창작에만 집중할 수 있도록 브랜딩·상품 기획·판매·계약을 전담하는 전통문화 소속사입니다.
+            ONDO는 무형유산 보유자가 창작에만 집중할 수 있도록 브랜딩·상품 기획·판매·계약을 전담하는 전통문화 소속사입니다.
           </p>
 
           {/* 타글라인 — figma 43:5 / 43:6 */}
           <p className="absolute left-[347px] top-[971px] w-[220px] text-base leading-tight">
-            무형문화재 보유자의
+            무형유산 보유자의
             <br />
             브랜딩 파트너
           </p>
@@ -166,13 +158,18 @@ export default function Home() {
           {/* 좌: 가로형 (500×309) — figma 107:139 */}
           {desktopNewsSlot(news[0], "absolute left-0 top-[2218px] w-[500px]", "h-[309px] w-[500px]")}
 
-          {/* 우: 세로로 긴 박스 (278×623) — figma 107:85, footer 바로 위 */}
+          {/*
+            우: 세로형 박스 — figma 원안은 278×623이었으나 420으로 낮춤.
+            623은 1:2.24 비율이라 실제 기사 썸네일(대개 가로형)을 object-cover로 넣으면
+            좌우가 거의 다 잘려 무슨 사진인지 알 수 없고, 하단에 빈 여백만 길게 남아
+            푸터가 화면 한참 아래로 밀렸다. 세로 강조는 유지하되 크롭이 성립하는 선까지만.
+          */}
           {desktopNewsSlot(
             news[1],
             "absolute left-[680px] top-[2346px] w-[278px]",
-            "h-[623px] w-[278px]",
+            "h-[420px] w-[278px]",
           )}
-        </div>
+        </FitCanvas>
       </section>
 
       {/* ═══════════ 모바일·태블릿·소형 노트북 (<1280): 세로 스택 ═══════════ */}
@@ -194,7 +191,7 @@ export default function Home() {
             소속사, 온도
           </h1>
           <p className="mt-5 max-w-[640px] text-base leading-base text-text-muted">
-            ONDO는 무형문화재 보유자가 창작에만 집중할 수 있도록 브랜딩·상품 기획·판매·계약을 전담하는 전통문화 소속사입니다.
+            ONDO는 무형유산 보유자가 창작에만 집중할 수 있도록 브랜딩·상품 기획·판매·계약을 전담하는 전통문화 소속사입니다.
           </p>
 
           {/* 히어로 미디어 (Project 1) */}
@@ -212,7 +209,7 @@ export default function Home() {
           {/* 타글라인 */}
           <div className="mt-8 flex flex-col gap-4 text-base leading-tight sm:flex-row sm:gap-16">
             <p>
-              무형문화재 보유자의
+              무형유산 보유자의
               <br />
               브랜딩 파트너
             </p>

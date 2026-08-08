@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { resolveImageUrl } from "../../api/client";
 
 /**
  * 카드 커버 이미지 공통 — 4:5 비율 고정(CLS 방지), lazy loading.
@@ -27,7 +28,7 @@ export default function CardImage({
   return (
     <div className="aspect-[4/5] w-full overflow-hidden bg-surface-muted">
       <img
-        src={src}
+        src={resolveImageUrl(src)}
         alt={alt}
         loading="lazy"
         onError={() => setFailed(true)}
