@@ -21,7 +21,16 @@ ondo:
     access-token-validity: 1800      # 30분 (초)
     refresh-token-validity: 1209600  # 14일 (초)
   upload:
-    dir: ${UPLOAD_DIR:./uploads}     # 로컬 이미지 저장 디렉토리
+    dir: ${UPLOAD_DIR:./uploads}     # 로컬 이미지 저장 디렉토리 (R2 미설정 시 사용)
+  r2:
+    # Cloudflare R2 (S3 호환). 아래 5개가 모두 채워지면 업로드가 R2로 가고,
+    # 하나라도 비면 로컬 디스크에 저장된다 — 로컬 개발은 설정 없이 그대로 동작.
+    # 운영(Render)에서는 재배포마다 디스크가 초기화되므로 반드시 설정할 것.
+    endpoint: ${R2_ENDPOINT:}                # https://<account-id>.r2.cloudflarestorage.com
+    access-key: ${R2_ACCESS_KEY:}            # R2 API 토큰의 Access Key ID
+    secret-key: ${R2_SECRET_KEY:}            # R2 API 토큰의 Secret Access Key
+    bucket: ${R2_BUCKET:}                    # 예: ondo-uploads
+    public-base-url: ${R2_PUBLIC_BASE_URL:}  # 공개 주소, 예: https://pub-xxxx.r2.dev
   naver:
     client-id: ${NAVER_CLIENT_ID:}       # 네이버 검색(뉴스) API — backend/.env(gitignored)로 로컬 주입
     client-secret: ${NAVER_CLIENT_SECRET:}

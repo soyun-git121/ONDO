@@ -88,13 +88,47 @@ $bytes = New-Object byte[] 48; [System.Security.Cryptography.RandomNumberGenerat
 
 운영 DB는 시드가 없어 처음엔 비어 있다. **관리자 화면에서 콘텐츠를 등록**하면 사이트에 노출된다.
 
+## 6. Cloudflare R2 — 업로드 이미지 영구 저장
+
+Render 무료 티어는 재배포마다 디스크가 초기화되어 업로드한 이미지가 전부 사라진다.
+R2(S3 호환, 10GB 무료·트래픽 무료)에 저장하면 재배포와 무관하게 유지된다.
+
+**설정하지 않아도 서비스는 그대로 돈다** — R2 값이 없으면 기존처럼 로컬 디스크에 저장한다.
+그래서 로컬 개발에는 아무 설정도 필요 없다.
+
+1. [dash.cloudflare.com](https://dash.cloudflare.com) 가입 → 왼쪽 메뉴 **R2 Object Storage**
+   - R2 활성화 시 카드 등록을 요구할 수 있다. 무료 한도(10GB) 안에서는 청구되지 않는다.
+2. **Create bucket** → 이름 `ondo-uploads`, 위치는 자동(Automatic)
+3. 버킷 → **Settings → Public access → R2.dev subdomain** 활성화
+   → `https://pub-xxxxxxxx.r2.dev` 주소가 나온다. 이게 `R2_PUBLIC_BASE_URL`.
+4. R2 첫 화면 우측 **Manage R2 API Tokens → Create API token**
+   - Permissions: **Object Read & Write**, 대상 버킷: `ondo-uploads`
+   - 발급되는 **Access Key ID / Secret Access Key**와 **엔드포인트**(`https://<account-id>.r2.cloudflarestorage.com`)를 복사.
+     Secret은 이때만 보이므로 바로 저장할 것.
+5. Render **Environment** 탭에 5개 추가 → Save (자동 재시작):
+
+| Key | 값 |
+|---|---|
+| `R2_ENDPOINT` | `https://<account-id>.r2.cloudflarestorage.com` |
+| `R2_ACCESS_KEY` | Access Key ID |
+| `R2_SECRET_KEY` | Secret Access Key |
+| `R2_BUCKET` | `ondo-uploads` |
+| `R2_PUBLIC_BASE_URL` | `https://pub-xxxxxxxx.r2.dev` |
+
+6. 확인: Render 로그에 `이미지 저장소: Cloudflare R2 (bucket=...)`가 찍히면 적용된 것.
+   관리자에서 이미지를 하나 올려보고, 반환된 주소가 `https://pub-...`로 시작하면 성공.
+
+> 이미 DB에 저장된 예전 `/uploads/...` 경로는 R2로 옮겨지지 않는다(파일 자체가 이미 사라진 상태).
+> 해당 이미지는 관리자에서 다시 업로드해야 한다.
+>
+> 로컬에서 R2를 테스트하려면 위 5개를 `backend/.env`(gitignored)에 넣고 `./gradlew bootRun`.
+
 ---
 
 ## 알아둘 점
 
 - **콜드 스타트**: Render 무료는 15분 미접속 시 잠든다. 다음 방문자가 깨우는 데 30~60초 걸린다(Java라 느린 편).
-- **업로드 이미지가 사라진다**: Render 무료는 디스크가 재배포마다 초기화된다. 관리자에서 파일 업로드 대신
-  **이미지 URL 붙여넣기**를 쓰는 것을 권장. (영구 저장이 필요해지면 Cloudflare R2 등 외부 스토리지 연동)
+- **업로드 이미지**: R2를 설정하지 않으면 Render 재배포마다 사라진다 (위 6번 참고).
 - **DB 백업**: Aiven 무료 플랜도 자동 백업이 있다. 콘솔에서 확인.
 - **코드 수정 후 재배포**: GitHub에 push하면 Render·Vercel이 자동으로 다시 배포한다.
 

@@ -7,7 +7,7 @@
 
 ## 1. 서비스 개요
 
-**ONDO**: 무형문화재 보유자의 브랜딩·상품기획·판매·계약을 전담하는 전통문화 소속사.
+**ONDO**: 무형유산 보유자의 브랜딩·상품기획·판매·계약을 전담하는 전통문화 소속사.
 웹사이트의 역할:
 
 | 목적 | 대상 | 핵심 페이지 |
@@ -28,7 +28,7 @@
 | DB | 개발: H2 → 운영: MySQL 8 (또는 PostgreSQL) | JPA로 교체 용이 |
 | Frontend | React 18 + Vite + TypeScript | UI 규칙은 design.md 준수 |
 | 스타일 | Tailwind CSS | design.md 토큰으로 config 구성, raw hex 금지 |
-| 이미지 저장 | 초기: 로컬/서버 디렉토리 → 확장: S3 호환 스토리지 | Artisan·Product 이미지 다수 |
+| 이미지 저장 | 로컬 디렉토리(개발) / Cloudflare R2 = S3 호환(운영) | `ImageStorage` 인터페이스로 분리, R2 설정 유무로 자동 선택 |
 | 인증 | 관리자용 JWT (Access + Refresh) | 일반 회원가입은 Phase 3 이후 |
 | 결제 | **보류.** Order 도메인·주문 화면까지만. PG(토스페이먼츠) 연동부는 인터페이스로 분리 | `PaymentGateway` 인터페이스 + `MockPaymentGateway` 구현 |
 
@@ -64,7 +64,7 @@ Artisan
 ├── id, slug (unique)
 ├── name                    # 윤종국
 ├── title                   # 악기장 (종목)
-├── designation             # 국가무형문화재 / 이수자 / 명장 (enum: HOLDER, SUCCESSOR, MASTER)
+├── designation             # 국가무형유산 / 이수자 / 명장 (enum: HOLDER, SUCCESSOR, MASTER)
 ├── shortIntro              # 카드용 한 줄 소개 ("4대 가업, 북메우기")
 ├── story                   # 랜딩 페이지 본문 (마크다운 or 리치텍스트)
 ├── profileImageUrl, coverImageUrl

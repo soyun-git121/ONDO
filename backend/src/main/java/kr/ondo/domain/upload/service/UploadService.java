@@ -1,33 +1,35 @@
 package kr.ondo.domain.upload.service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
+import kr.ondo.domain.upload.storage.ImageStorage;
 import kr.ondo.global.exception.BusinessException;
 import kr.ondo.global.exception.GlobalErrorCode;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 이미지 업로드 저장. api.md §8 (jpg/png/webp, 최대 10MB).
- * 초기: 로컬 디렉토리(ondo.upload.dir) → 확장 시 S3 호환 스토리지로 교체 (architecture.md §2).
+ * 이미지 업로드 검증 + 저장 키 생성. api.md §8 (jpg/png/webp, 최대 10MB).
+ * 실제 저장은 {@link ImageStorage} 구현이 담당 — 로컬 디스크 또는 Cloudflare R2 (architecture.md §2).
  */
 @Service
 public class UploadService {
 
-    private static final Set<String> ALLOWED_EXT = Set.of("jpg", "jpeg", "png", "webp");
+    /** 허용 확장자 → 저장 시 붙일 Content-Type. */
+    private static final Map<String, String> CONTENT_TYPES = Map.of(
+            "jpg", "image/jpeg",
+            "jpeg", "image/jpeg",
+            "png", "image/png",
+            "webp", "image/webp");
+
     private static final DateTimeFormatter DATE_PATH = DateTimeFormatter.ofPattern("yyyy/MM");
 
-    private final Path baseDir;
+    private final ImageStorage storage;
 
-    public UploadService(@Value("${ondo.upload.dir:./uploads}") String dir) {
-        this.baseDir = Paths.get(dir).toAbsolutePath().normalize();
+    public UploadService(ImageStorage storage) {
+        this.storage = storage;
     }
 
     public String store(MultipartFile file) {
@@ -35,21 +37,15 @@ public class UploadService {
             throw new BusinessException(GlobalErrorCode.INVALID_INPUT, "업로드할 파일이 없습니다.");
         }
         String ext = extractExtension(file.getOriginalFilename());
-        if (!ALLOWED_EXT.contains(ext)) {
+        String contentType = CONTENT_TYPES.get(ext);
+        if (contentType == null) {
             throw new BusinessException(GlobalErrorCode.INVALID_INPUT,
                     "지원하지 않는 형식입니다 (jpg/png/webp만 허용).");
         }
 
-        String datePath = LocalDate.now().format(DATE_PATH);
-        String filename = UUID.randomUUID().toString().replace("-", "") + "." + ext;
-        try {
-            Path dir = baseDir.resolve(datePath);
-            Files.createDirectories(dir);
-            file.transferTo(dir.resolve(filename));
-        } catch (IOException e) {
-            throw new BusinessException(GlobalErrorCode.INTERNAL_ERROR, "파일 저장에 실패했습니다.");
-        }
-        return "/uploads/" + datePath + "/" + filename;
+        String key = LocalDate.now().format(DATE_PATH) + "/"
+                + UUID.randomUUID().toString().replace("-", "") + "." + ext;
+        return storage.put(key, contentType, file);
     }
 
     private String extractExtension(String originalName) {
