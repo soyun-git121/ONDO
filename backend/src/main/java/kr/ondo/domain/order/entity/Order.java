@@ -18,6 +18,8 @@ import kr.ondo.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * 주문(Order) — `order`는 예약어라 테이블명 복수형. db_schema.md §5 / api.md §4.
@@ -64,6 +66,7 @@ public class Order extends BaseTimeEntity {
     private int totalAmount;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     private OrderStatus status;
 

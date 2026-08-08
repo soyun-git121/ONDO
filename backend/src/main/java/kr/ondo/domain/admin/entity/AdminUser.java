@@ -55,4 +55,9 @@ public class AdminUser extends BaseTimeEntity {
     public void updateLastLogin() {
         this.lastLoginAt = LocalDateTime.now();
     }
+
+    /** password는 반드시 인코딩된 값을 넘긴다. 부트스트랩이 설정값과 동기화할 때 사용. */
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }

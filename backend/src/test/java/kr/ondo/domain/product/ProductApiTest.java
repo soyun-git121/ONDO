@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * 상품 공개 API 통합 테스트. dev H2 + data.sql(mini-buk, jeontong-buk) 기준. api.md §3.
+ * 상품 공개 API 통합 테스트. dev H2 + data.sql(미니 오브제 2종 + 문의 전용 1종) 기준. api.md §3.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -27,7 +27,7 @@ class ProductApiTest {
         mockMvc.perform(get("/api/products").param("sort", "priceAsc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.totalElements").value(2))
+                .andExpect(jsonPath("$.data.totalElements").value(3))
                 .andExpect(jsonPath("$.data.content[0].id").exists())
                 .andExpect(jsonPath("$.data.content[0].artisanName").value("윤종국"));
     }
@@ -37,17 +37,17 @@ class ProductApiTest {
     void filterByArtisan() throws Exception {
         mockMvc.perform(get("/api/products").param("artisan", "yoon-jongguk"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.totalElements").value(2));
+                .andExpect(jsonPath("$.data.totalElements").value(3));
     }
 
     @Test
     @DisplayName("GET /api/products/{slug} — 상세에 id·재고·보유자 블록 포함")
     void getProductDetail() throws Exception {
-        mockMvc.perform(get("/api/products/mini-buk"))
+        mockMvc.perform(get("/api/products/mini-janggu-object"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").exists())
-                .andExpect(jsonPath("$.data.name").value("미니어처 전통 북"))
-                .andExpect(jsonPath("$.data.price").value(45000))
+                .andExpect(jsonPath("$.data.name").value("미니 장구 오브제"))
+                .andExpect(jsonPath("$.data.price").value(100000))
                 .andExpect(jsonPath("$.data.status").value("ON_SALE"))
                 .andExpect(jsonPath("$.data.artisan.slug").value("yoon-jongguk"))
                 .andExpect(jsonPath("$.data.images.length()").value(1));

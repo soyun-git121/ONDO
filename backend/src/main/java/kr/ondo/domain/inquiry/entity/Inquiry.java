@@ -13,6 +13,8 @@ import kr.ondo.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * 협업문의 (B2B 리드). db_schema.md §11 / api.md §7.
@@ -32,6 +34,7 @@ public class Inquiry extends BaseTimeEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     private InquiryType type;
 
@@ -51,6 +54,7 @@ public class Inquiry extends BaseTimeEntity {
     private String message;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     private InquiryStatus status;
 

@@ -20,7 +20,12 @@ public record AdminOrderResponse(
         int totalAmount,
         LocalDateTime paidAt,
         LocalDateTime createdAt,
-        List<Item> items
+        List<Item> items,
+        /**
+         * 지금 상태에서 넘어갈 수 있는 상태들. 관리자 화면은 이 값으로 버튼을 그린다 —
+         * 전이 규칙을 프론트에 복제하지 않기 위해 서버가 내려준다.
+         */
+        List<OrderStatus> allowedNextStatuses
 ) {
     public record Item(Long productId, String productName, String artisanName, int price, int quantity) {
     }
@@ -33,7 +38,8 @@ public record AdminOrderResponse(
         return new AdminOrderResponse(
                 o.getId(), o.getOrderNumber(), o.getStatus(), o.getOrdererName(), o.getPhone(),
                 o.getEmail(), o.getZipcode(), o.getAddress(), o.getAddressDetail(), o.getMemo(),
-                o.getTotalAmount(), o.getPaidAt(), o.getCreatedAt(), items
+                o.getTotalAmount(), o.getPaidAt(), o.getCreatedAt(), items,
+                o.getStatus().allowedNextStatuses()
         );
     }
 }

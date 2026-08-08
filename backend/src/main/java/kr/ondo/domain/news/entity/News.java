@@ -19,6 +19,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * 뉴스. db_schema.md §7 / api.md §5.
@@ -45,6 +47,7 @@ public class News extends BaseTimeEntity {
     private String thumbnailUrl;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     private NewsType type;
 
@@ -58,6 +61,7 @@ public class News extends BaseTimeEntity {
     private String sourceName; // CURATED 출처
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     private NewsCategory category;
 

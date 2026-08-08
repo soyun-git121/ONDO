@@ -32,6 +32,12 @@ VALUES
  '손안에 담은 북', '## 미니 북 오브제
 
 윤종국 악기장의 손끝에서 태어난 미니 북 오브제.', '/uploads/sample/product-mini-buk-object.png', 10, 'ON_SALE', NULL,
+ CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+-- 주문 제작 작품 — 가격·재고 없이 문의로만 진행(INQUIRY_ONLY). db_schema.md §3: price 0 허용.
+(5, 1, 'buk-custom-order', '전통 북 주문 제작', 'ARTWORK', 0,
+ '공방에서 직접 제작하는 맞춤 전통 북', '## 전통 북 주문 제작
+
+크기·가죽·단청을 상의해 공방에서 직접 제작합니다. 협업 문의로 연락 주세요.', NULL, 0, 'INQUIRY_ONLY', NULL,
  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO product_image
@@ -40,7 +46,32 @@ VALUES
 (3, '/uploads/sample/product-mini-janggu.png', NULL, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (4, '/uploads/sample/product-mini-buk-object.png', NULL, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- 협업 실적(Project): 아직 없음 — admin CRUD 또는 시드로 추가 예정
+-- 협업 실적: 텀블벅 펀딩 (대표 실적 → 홈·협업문의 페이지 노출)
+INSERT INTO project
+(id, slug, title, type, client_name, summary, description, result_metric, thumbnail_url,
+ project_date, is_featured, display_order, is_published, created_at, updated_at)
+VALUES
+(1, 'tumblbug-buk', '텀블벅 전통 북 펀딩 — 미니 북 오브제', 'FUNDING', '텀블벅',
+ '전통 북을 손안의 오브제로 옮긴 첫 펀딩', '## 배경
+
+전통 악기는 보고 듣는 것에 그쳤습니다. 곁에 두고 만질 수 있는 물건으로 옮겨 보자는 데서 출발했습니다.
+
+## 진행
+
+윤종국 악기장이 실제 북 제작 공정을 그대로 축소해 오브제를 만들었습니다.
+
+## 결과
+
+목표 금액의 12배를 모으며 마감했습니다.', '펀딩률 1,200% 달성', '/uploads/sample/project-tumblbug-buk.png',
+ '2026-03-15', TRUE, 0, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO project_image
+(project_id, image_url, caption, sort_order, created_at, updated_at)
+VALUES
+(1, '/uploads/sample/project-tumblbug-buk-1.png', '펀딩 페이지 대표 이미지', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO project_artisan (project_id, artisan_id, role)
+VALUES (1, 1, '전통 북 제작');
 
 -- 뉴스: 자체 작성(ORIGINAL, 윤종국 연결) + 외부 큐레이션(CURATED)
 INSERT INTO news

@@ -1,7 +1,5 @@
 package kr.ondo.domain.order.service;
 
-import java.util.Map;
-import java.util.Set;
 import kr.ondo.domain.order.dto.AdminOrderListItem;
 import kr.ondo.domain.order.dto.AdminOrderResponse;
 import kr.ondo.domain.order.dto.OrderStatusRequest;
@@ -22,23 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 관리자 주문 조회·상태 관리. api.md §8.
- * 전이 규칙: PENDING→PAID→PREPARING→SHIPPED→DELIVERED, 취소는 PENDING·PAID에서만.
+ * 전이 규칙은 {@link OrderStatus#allowedNextStatuses()}가 단일 출처다.
  * 취소 시 재고 복원.
  */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AdminOrderService {
-
-    /** 허용 전이 맵. */
-    private static final Map<OrderStatus, Set<OrderStatus>> ALLOWED = Map.of(
-            OrderStatus.PENDING, Set.of(OrderStatus.PAID, OrderStatus.CANCELLED),
-            OrderStatus.PAID, Set.of(OrderStatus.PREPARING, OrderStatus.CANCELLED),
-            OrderStatus.PREPARING, Set.of(OrderStatus.SHIPPED),
-            OrderStatus.SHIPPED, Set.of(OrderStatus.DELIVERED),
-            OrderStatus.DELIVERED, Set.of(),
-            OrderStatus.CANCELLED, Set.of()
-    );
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
@@ -62,7 +50,7 @@ public class AdminOrderService {
         OrderStatus current = order.getStatus();
         OrderStatus next = req.status();
 
-        if (next == current || !ALLOWED.getOrDefault(current, Set.of()).contains(next)) {
+        if (!current.canTransitionTo(next)) {
             throw new BusinessException(OrderErrorCode.INVALID_STATUS_TRANSITION,
                     current + " → " + next + " 전이는 허용되지 않습니다.");
         }

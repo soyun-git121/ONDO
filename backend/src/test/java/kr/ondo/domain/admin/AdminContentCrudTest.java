@@ -61,7 +61,7 @@ class AdminContentCrudTest {
     void productDuplicateSlug() throws Exception {
         String token = token();
         String create = """
-                { "artisanId":1, "slug":"mini-buk", "name":"중복", "category":"GOODS",
+                { "artisanId":1, "slug":"mini-janggu-object", "name":"중복", "category":"GOODS",
                   "price":1000, "stockQuantity":1, "status":"ON_SALE", "images":[] }
                 """;
         mockMvc.perform(post("/api/admin/products")
