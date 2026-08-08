@@ -4,10 +4,27 @@ import axios from "axios";
  * 공통 axios 클라이언트. API 호출은 src/api/ 안에서만 작성한다 (claude.md 컨벤션).
  * 응답은 항상 ApiResponse<T> 래핑 — 인터셉터에서 success 검사 후 data만 반환.
  */
+/**
+ * API 서버 주소. 프론트와 백엔드를 다른 도메인에 배포할 때(Vercel + Render) 설정한다.
+ * 비워두면 상대경로 "/api" — 로컬 dev 프록시나 같은 도메인 배포에서 그대로 동작.
+ */
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
+
 export const client = axios.create({
-  baseURL: "/api",
+  baseURL: `${API_BASE}/api`,
   timeout: 10_000,
 });
+
+/**
+ * 업로드 이미지 경로("/uploads/...")를 실제 표시 가능한 URL로 바꾼다.
+ * 백엔드가 다른 도메인이면 그 도메인을 앞에 붙여야 이미지가 보인다.
+ * 외부 URL(http로 시작)은 그대로 둔다.
+ */
+export function resolveImageUrl(url: string | null | undefined): string | undefined {
+  if (!url) return undefined;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${API_BASE}${url}`;
+}
 
 /* ---------- 관리자 인증 토큰 ---------- */
 
