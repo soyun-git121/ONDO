@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import FitCanvas from "../components/ui/FitCanvas";
 
 /**
  * News · Detail — Figma 53:62 "News · Detail / Desktop / Wireframe (blit)" 픽셀 정합 이식.
@@ -40,7 +41,7 @@ export default function NewsDetail() {
     <main style={{ fontFamily: INTER }}>
       {/* ═══════════ 데스크톱/노트북 (≥1280): Figma 절대좌표 1:1 캔버스 ═══════════ */}
       <section className="hidden xl:block">
-        <div className="relative mx-auto h-[1300px] max-w-[1280px]">
+        <FitCanvas w={1280} h={1300}>
           {/* 목록 링크 — 53:66 */}
           <A l={X} t={4} cls="whitespace-pre text-[14px] text-text-muted">{"‹  News 목록"}</A>
 
@@ -69,7 +70,7 @@ export default function NewsDetail() {
 
           {/* Article footer (247:392) */}
           <A l={X} t={1162} w={W} cls="text-center text-[14px] text-text-primary">{"‹  News 목록으로 돌아가기"}</A>
-        </div>
+        </FitCanvas>
       </section>
 
       {/* ═══════════ 모바일·태블릿·소형 노트북 (<1280): 세로 스택 ═══════════ */}

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import FitCanvas from "../components/ui/FitCanvas";
 
 /**
  * Product Detail — Figma 49:2 "Product Detail / Desktop / Wireframe (blit)" 픽셀 정합 이식.
@@ -40,7 +41,7 @@ export default function ProductDetail() {
     <main style={{ fontFamily: INTER }}>
       {/* ═══════════ 데스크톱/노트북 (≥1280): Figma 절대좌표 1:1 캔버스 ═══════════ */}
       <section className="hidden xl:block">
-        <div className="relative mx-auto h-[1990px] max-w-[1280px]">
+        <FitCanvas w={1280} h={1990}>
           {/* 브레드크럼 — 49:6 */}
           <A l={0} t={4} cls="whitespace-pre text-[14px] text-text-muted">
             {"Shop   ›   윤종국 · 악기장   ›   미니어처 전통 북"}
@@ -109,7 +110,7 @@ export default function ProductDetail() {
               <A l={x} t={1894} w={420} cls="text-center text-[14px] font-bold text-[#999]">—</A>
             </span>
           ))}
-        </div>
+        </FitCanvas>
       </section>
 
       {/* ═══════════ 모바일·태블릿·소형 노트북 (<1280): 세로 스택 ═══════════ */}

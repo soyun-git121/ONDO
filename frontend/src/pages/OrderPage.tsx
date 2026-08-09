@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import FitCanvas from "../components/ui/FitCanvas";
 
 /**
  * Order · Checkout(주문/결제) — Figma 51:2 "Order · Checkout / Desktop / Wireframe (blit)" 픽셀 정합 이식.
@@ -62,7 +63,7 @@ export default function OrderPage() {
     <main style={{ fontFamily: INTER }}>
       {/* ═══════════ 데스크톱/노트북 (≥1280): Figma 절대좌표 1:1 캔버스 ═══════════ */}
       <section className="hidden xl:block">
-        <div className="relative mx-auto h-[1680px] max-w-[1280px]">
+        <FitCanvas w={1280} h={1680}>
           {/* Page header */}
           <A l={0} t={26} cls="whitespace-nowrap text-[46px] font-bold text-text-primary">주문 / 결제</A>
 
@@ -137,7 +138,7 @@ export default function OrderPage() {
           <A l={252} t={1456} cls="whitespace-pre text-[14px] text-text-muted">{"입금 계좌  (정보 준비 중)"}</A>
           <A l={252} t={1486} cls="whitespace-nowrap text-[13px] text-[#999]">입금 확인 후 상품 준비 시작 — PAID 전이는 admin 수동 처리 (실결제 없음)</A>
           <A l={0} t={1552} w={1280} cls="text-center text-[14px] text-text-primary">홈으로 돌아가기</A>
-        </div>
+        </FitCanvas>
       </section>
 
       {/* ═══════════ 모바일·태블릿·소형 노트북 (<1280): 세로 스택 ═══════════ */}

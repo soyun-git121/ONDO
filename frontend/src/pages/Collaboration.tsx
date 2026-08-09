@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import FitCanvas from "../components/ui/FitCanvas";
 
 /**
  * Collaboration(협업문의) — Figma 55:2 "Collaboration / Desktop / Wireframe (blit)" 픽셀 정합 이식.
@@ -69,7 +70,7 @@ export default function Collaboration() {
     <main style={{ fontFamily: INTER }}>
       {/* ═══════════ 데스크톱/노트북 (≥1280): Figma 절대좌표 1:1 캔버스 ═══════════ */}
       <section className="hidden xl:block">
-        <div className="relative mx-auto h-[1740px] max-w-[1280px]">
+        <FitCanvas w={1280} h={1740}>
           {/* Hero (248:381) */}
           <A l={0} t={30} cls="whitespace-nowrap text-[64px] font-bold text-text-primary">전통과 함께할</A>
           <A l={0} t={114} cls="whitespace-nowrap text-[64px] font-bold text-text-primary">파트너를 찾습니다</A>
@@ -154,7 +155,7 @@ export default function Collaboration() {
               </span>
             );
           })}
-        </div>
+        </FitCanvas>
       </section>
 
       {/* ═══════════ 모바일·태블릿·소형 노트북 (<1280): 세로 스택 ═══════════ */}
