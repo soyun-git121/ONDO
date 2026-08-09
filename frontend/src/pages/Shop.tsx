@@ -4,6 +4,7 @@ import FitCanvas from "../components/ui/FitCanvas";
 import { getProducts } from "../api/products";
 import { getArtisans } from "../api/artisans";
 import { useFetch } from "../hooks/useFetch";
+import { priceText } from "../types/product";
 import type { ProductSort, ProductSummary } from "../types/product";
 import { resolveImageUrl } from "../api/client";
 
@@ -46,13 +47,11 @@ const LINE3 = {
   inquiry: "text-[13px] font-medium leading-[1.6] text-text-primary",
 };
 
-const won = (v: number) => `${v.toLocaleString("ko-KR")}원`;
-
-/** 상태별 표시 규칙 — 가격줄/뱃지/CTA는 status 하나에서 파생된다. */
+/** 상태별 표시 규칙 — 가격줄/뱃지/CTA는 status 하나에서 파생된다. 문구는 types/product.ts가 정본. */
 function priceLine(p: ProductSummary) {
-  if (p.status === "INQUIRY_ONLY") return { text: "주문 문의", cls: LINE3.inquiry };
-  if (p.status === "SOLD_OUT") return { text: won(p.price), cls: LINE3.muted };
-  return { text: won(p.price), cls: LINE3.price };
+  if (p.status === "INQUIRY_ONLY") return { text: priceText(p), cls: LINE3.inquiry };
+  if (p.status === "SOLD_OUT") return { text: priceText(p), cls: LINE3.muted };
+  return { text: priceText(p), cls: LINE3.price };
 }
 function ctaOf(p: ProductSummary) {
   if (p.status === "ON_SALE") return "주문하기";
