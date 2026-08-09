@@ -43,6 +43,11 @@ jdbc:mysql://<HOST>:<PORT>/<DATABASE>?serverTimezone=Asia/Seoul&characterEncodin
 | `JWT_SECRET` | 아래 명령으로 생성 |
 | `ADMIN_PASSWORD` | 관리자 로그인 비밀번호 |
 | `CORS_ALLOWED_ORIGINS` | (3번 후) Vercel 주소, 예: `https://ondo.vercel.app` |
+| `NAVER_CLIENT_ID` | (선택) 뉴스 가져오기용 — 아래 참조 |
+| `NAVER_CLIENT_SECRET` | (선택) 뉴스 가져오기용 — 아래 참조 |
+
+> `NAVER_*` 두 개가 없으면 서버는 정상 기동하지만, admin **뉴스 → 기사 가져오기**를 누를 때
+> "네이버 API 키가 설정되지 않았습니다"로 실패한다. 직접 작성하는 뉴스(ORIGINAL)는 키 없이도 쓴다.
 
 JWT_SECRET 생성 (Windows PowerShell):
 ```powershell
@@ -122,6 +127,28 @@ R2(S3 호환, 10GB 무료·트래픽 무료)에 저장하면 재배포와 무관
 > 해당 이미지는 관리자에서 다시 업로드해야 한다.
 >
 > 로컬에서 R2를 테스트하려면 위 5개를 `backend/.env`(gitignored)에 넣고 `./gradlew bootRun`.
+
+---
+
+## 7. 네이버 검색 API — 뉴스 가져오기 (선택)
+
+admin **뉴스 → 기사 가져오기**가 네이버 검색(뉴스) Open API를 쓴다.
+키가 없으면 이 버튼만 실패하고, 나머지 기능과 서버 기동에는 영향이 없다.
+
+1. [developers.naver.com/apps](https://developers.naver.com/apps) 로그인 → **애플리케이션 등록**
+2. 사용 API에서 **검색**을 선택 (뉴스 검색이 여기 포함된다)
+3. 환경은 **WEB 설정**을 고르고 서비스 URL에 배포 주소를 넣는다
+   (검색 API는 서버에서 호출하므로 URL 검증이 느슨하다. `https://<vercel주소>` 정도면 된다)
+4. 등록하면 **Client ID / Client Secret**이 나온다
+5. Render → **Environment**에 두 개를 넣고 저장 (저장하면 자동으로 재배포된다)
+
+| Key | Value |
+|---|---|
+| `NAVER_CLIENT_ID` | 발급받은 Client ID |
+| `NAVER_CLIENT_SECRET` | 발급받은 Client Secret |
+
+> 키는 저장소에 커밋하지 않는다. 로컬에서 쓰려면 `backend/.env`(gitignored)에 같은 이름으로 넣는다.
+> 무료 호출 한도는 하루 25,000건이라 이 용도로는 넉넉하다.
 
 ---
 

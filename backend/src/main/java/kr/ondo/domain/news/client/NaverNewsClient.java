@@ -42,8 +42,11 @@ public class NaverNewsClient {
 
     public List<NaverNewsItem> search(String query, int display) {
         if (clientId.isBlank() || clientSecret.isBlank()) {
+            // 어디에 넣어야 하는지까지 알려준다 — 이 메시지가 admin 화면에 그대로 뜬다.
             throw new BusinessException(NewsErrorCode.NEWS_IMPORT_FAILED,
-                    "네이버 API 키(NAVER_CLIENT_ID/NAVER_CLIENT_SECRET)가 설정되지 않았습니다.");
+                    "네이버 API 키가 설정되지 않았습니다. 배포 환경은 Render → Environment에, "
+                            + "로컬은 backend/.env에 NAVER_CLIENT_ID·NAVER_CLIENT_SECRET을 넣어 주세요. "
+                            + "(발급: developers.naver.com/apps — 사용 API '검색' 선택)");
         }
 
         URI uri = UriComponentsBuilder.fromUriString(SEARCH_URL)
