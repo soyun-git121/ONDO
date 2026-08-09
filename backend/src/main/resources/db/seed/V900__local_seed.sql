@@ -37,30 +37,8 @@ INSERT INTO product_image (product_id, image_url, caption, sort_order)
 VALUES (3, '/uploads/sample/product-mini-janggu.png', NULL, 0),
        (4, '/uploads/sample/product-mini-buk-object.png', NULL, 0);
 
--- 협업 실적: 텀블벅 펀딩 (대표 실적 → 홈·협업문의 페이지 노출)
-INSERT INTO project
-(id, slug, title, type, client_name, summary, description, result_metric, thumbnail_url,
- project_date, is_featured, display_order, is_published)
-VALUES (1, 'tumblbug-buk', '텀블벅 전통 북 펀딩 — 미니 북 오브제', 'FUNDING', '텀블벅',
-        '전통 북을 손안의 오브제로 옮긴 첫 펀딩',
-        '## 배경
-
-전통 악기는 보고 듣는 것에 그쳤습니다. 곁에 두고 만질 수 있는 물건으로 옮겨 보자는 데서 출발했습니다.
-
-## 진행
-
-윤종국 악기장이 실제 북 제작 공정을 그대로 축소해 오브제를 만들었습니다.
-
-## 결과
-
-목표 금액의 12배를 모으며 마감했습니다.', '펀딩률 1,200% 달성', '/uploads/sample/project-tumblbug-buk.png',
-        '2026-03-15', 1, 0, 1);
-
-INSERT INTO project_image (project_id, image_url, caption, sort_order)
-VALUES (1, '/uploads/sample/project-tumblbug-buk-1.png', '펀딩 페이지 대표 이미지', 0);
-
-INSERT INTO project_artisan (project_id, artisan_id, role)
-VALUES (1, 1, '전통 북 제작');
+-- 협업 실적: 시드 없음. 실제 실적은 admin에서 등록한다.
+--   (예시 데이터를 넣어 두면 실제 실적인 줄 알고 화면에 그대로 노출된다.)
 
 -- 뉴스: 자체 작성(ORIGINAL, 윤종국 연결) + 외부 큐레이션(CURATED)
 INSERT INTO news

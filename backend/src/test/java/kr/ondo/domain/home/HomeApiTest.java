@@ -27,7 +27,9 @@ class HomeApiTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.featuredArtisans[0].slug").value("yoon-jongguk"))
                 .andExpect(jsonPath("$.data.featuredProducts[0].artisanName").value("윤종국"))
-                .andExpect(jsonPath("$.data.featuredProjects[0].slug").value("tumblbug-buk"))
+                // 실적은 시드에 없다 — 홈 노출분은 admin이 고른다. 필드 계약만 확인.
+                // 필터 동작 자체는 ProjectApiTest.placementFilter가 검증한다.
+                .andExpect(jsonPath("$.data.featuredProjects").isArray())
                 .andExpect(jsonPath("$.data.latestNews[0].id").value(1));
     }
 }
