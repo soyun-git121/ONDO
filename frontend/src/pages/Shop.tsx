@@ -191,13 +191,19 @@ export default function Shop() {
           >
             주문문의
           </Link>
-          <p className="absolute whitespace-nowrap text-[14px] font-medium text-text-muted" style={{ left: 759.7, top: 388.89 }}>
+          {/*
+            배너 문구는 회색 박스(left 306.2, w 980) 폭에 걸고 text-center로 가운데를 잡는다.
+            Figma 좌표를 left에 그대로 박으면 그때 잰 글자 길이에서만 가운데가 맞아,
+            문구를 고치는 순간 어긋난다(실제로 최대 107px까지 왼쪽으로 밀려 있었다).
+            세로 위치(top)는 시안 그대로 둔다.
+          */}
+          <p className="absolute text-center text-[14px] font-medium text-text-muted" style={{ left: 306.2, top: 388.89, width: 980 }}>
             FEATURED
           </p>
-          <p className="absolute whitespace-nowrap text-[40px] font-bold text-text-primary" style={{ left: 613.2, top: 412.89 }}>
+          <p className="absolute text-center text-[40px] font-bold text-text-primary" style={{ left: 306.2, top: 412.89, width: 980 }}>
             보유자의 손끝, 온도
           </p>
-          <p className="absolute whitespace-nowrap text-[15px] leading-[1.6] text-text-muted" style={{ left: 573.7, top: 478.89 }}>
+          <p className="absolute text-center text-[15px] leading-[1.6] text-text-muted" style={{ left: 306.2, top: 478.89, width: 980 }}>
             이 계절 온도가 추천하는 보유자의 작품
           </p>
 
