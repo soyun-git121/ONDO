@@ -1,17 +1,11 @@
 import { Link } from "react-router-dom";
+import { SITE_NAV } from "../../constants/nav";
+import { SOCIAL } from "../../constants/social";
 
-const FOOTER_NAV = [
-  { to: "/about", label: "About" },
-  { to: "/artisans", label: "보유자" },
-  { to: "/shop", label: "Shop" },
-  { to: "/projects", label: "Project" },
-  { to: "/news", label: "News" },
-  { to: "/collaboration", label: "협업문의" },
-];
-
-const FOOTER_SOCIAL = [
-  { href: "https://instagram.com", label: "Instagram" },
-  { href: "https://youtube.com", label: "YouTube" },
+/** href가 null이면 아직 채널이 없는 것 — 링크 대신 '준비 중'으로 그린다. */
+const FOOTER_SOCIAL: { href: string | null; label: string }[] = [
+  { href: SOCIAL.instagram, label: "Instagram" },
+  { href: SOCIAL.youtube, label: "YouTube" },
 ];
 
 /**
@@ -35,7 +29,7 @@ export default function Footer() {
             aria-label="푸터 메뉴"
             className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium"
           >
-            {FOOTER_NAV.map((m) => (
+            {SITE_NAV.map((m) => (
               <Link key={m.to} to={m.to} className="underline-offset-4 hover:underline">
                 {m.label}
               </Link>
@@ -48,16 +42,20 @@ export default function Footer() {
           <p>© 2026 ONDO · 전통문화 소속사</p>
           <div className="flex items-center gap-2">
             {FOOTER_SOCIAL.map((s, i) => (
-              <span key={s.href} className="flex items-center gap-2">
+              <span key={s.label} className="flex items-center gap-2">
                 {i > 0 && <span aria-hidden="true">·</span>}
-                <a
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline-offset-4 hover:underline"
-                >
-                  {s.label}
-                </a>
+                {s.href ? (
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline-offset-4 hover:underline"
+                  >
+                    {s.label}
+                  </a>
+                ) : (
+                  <span>{s.label} (준비 중)</span>
+                )}
               </span>
             ))}
             <span aria-hidden="true">·</span>

@@ -5,6 +5,7 @@ import { getNewsList } from "../api/news";
 import { useFetch } from "../hooks/useFetch";
 import { NEWS_CATEGORY_LABEL, type NewsCategory, type NewsSummary } from "../types/news";
 import { resolveImageUrl } from "../api/client";
+import { SOCIAL } from "../constants/social";
 
 /**
  * News · List — Figma 53:2 "News · List / Desktop / Wireframe (blit)" 픽셀 정합 이식.
@@ -110,9 +111,19 @@ export default function News() {
           <p className="absolute left-0 top-0 whitespace-nowrap text-[150px] font-bold leading-none text-text-primary">
             News
           </p>
-          <p className="absolute left-[5px] top-[182px] whitespace-nowrap text-[20px] text-text-muted">
-            온도와 전통문화의 소식을 전합니다.
-          </p>
+          {/* 서브타이틀 + 매거진 인스타 링크 — 절대좌표는 묶음 기준점만 잡고 내부는 flex.
+              링크 폭을 좌표로 재지 않으므로 문구가 바뀌어도 겹치지 않는다. */}
+          <div className="absolute left-[5px] top-[182px] flex items-baseline gap-5 whitespace-nowrap">
+            <p className="text-[20px] text-text-muted">온도와 전통문화의 소식을 전합니다.</p>
+            <a
+              href={SOCIAL.instagramMagazine}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[15px] font-medium text-text-primary underline underline-offset-4"
+            >
+              온도 매거진 인스타에서 보기 ↗
+            </a>
+          </div>
 
           {/* Filter tabs (247:382) */}
           {CHIPS.map((c, i) => {
@@ -203,9 +214,19 @@ export default function News() {
           <h1 className="whitespace-nowrap text-[clamp(56px,15vw,150px)] font-bold leading-none text-text-primary">
             News
           </h1>
-          <p className="mt-4 text-[clamp(16px,4vw,20px)] text-text-muted">
-            온도와 전통문화의 소식을 전합니다.
-          </p>
+          <div className="mt-4 flex flex-wrap items-baseline gap-x-5 gap-y-2">
+            <p className="text-[clamp(16px,4vw,20px)] text-text-muted">
+              온도와 전통문화의 소식을 전합니다.
+            </p>
+            <a
+              href={SOCIAL.instagramMagazine}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[15px] font-medium text-text-primary underline underline-offset-4"
+            >
+              온도 매거진 인스타에서 보기 ↗
+            </a>
+          </div>
 
           {/* 필터칩 */}
           <div className="mt-8 flex flex-wrap gap-[10px]">

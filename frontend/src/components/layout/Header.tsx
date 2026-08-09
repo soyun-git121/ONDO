@@ -1,17 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import Logo from "../ui/Logo";
+import { SITE_NAV } from "../../constants/nav";
 
 // Figma foundation "Header / global"(239:43) nav — 로고 + 6개 평범 항목(도트 CTA 없음).
-// 라벨은 Figma 시안 그대로: 보유자 메뉴는 영문 'Holder'(푸터는 '보유자' 유지).
-const MENU = [
-  { to: "/about", label: "About" },
-  { to: "/artisans", label: "Holder" },
-  { to: "/shop", label: "Shop" },
-  { to: "/projects", label: "Project" },
-  { to: "/news", label: "News" },
-  { to: "/collaboration", label: "협업문의" },
-];
+// 라벨은 Figma 시안 그대로. 항목 정의는 Footer와 공유한다(constants/nav.ts).
 
 /**
  * design.md §1 Header(GNB).
@@ -81,7 +74,7 @@ export default function Header() {
 
         {/* 데스크톱 메뉴 — Figma: 우측 정렬 단일 nav, 항목 간격 40px */}
         <nav aria-label="주 메뉴" className="hidden items-center gap-x-10 lg:flex">
-          {MENU.map((m) => (
+          {SITE_NAV.map((m) => (
             <NavLink key={m.to} to={m.to} className={navLinkClass}>
               {m.label}
             </NavLink>
@@ -113,7 +106,7 @@ export default function Header() {
           aria-label="메뉴"
           className="fixed inset-0 top-16 z-50 flex flex-col gap-4 bg-bg-base px-3 py-8 lg:hidden"
         >
-          {MENU.map((m) => (
+          {SITE_NAV.map((m) => (
             <NavLink
               key={m.to}
               to={m.to}

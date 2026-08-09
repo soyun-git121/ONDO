@@ -5,7 +5,7 @@ import { useAdminAuth } from "../../auth/AdminAuthContext";
 import { ToastProvider } from "./Feedback";
 
 const NAV = [
-  { to: "/admin/artisans", label: "보유자" },
+  { to: "/admin/artisans", label: "Master" },
   { to: "/admin/products", label: "상품" },
   { to: "/admin/news", label: "뉴스" },
   { to: "/admin/projects", label: "협업 실적" },
