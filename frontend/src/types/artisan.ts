@@ -1,5 +1,8 @@
 /** Artisan DTO — api.md §2와 1:1 */
 
+import type { ProductCategory, ProductStatus } from "./product";
+import type { ProjectType } from "./project";
+
 export type Designation = "HOLDER" | "SUCCESSOR" | "MASTER";
 
 /**
@@ -20,4 +23,36 @@ export interface ArtisanSummary {
   designation: Designation;
   shortIntro: string;
   profileImageUrl: string | null;
+}
+
+/** GET /api/artisans/{slug} — 상세 + 갤러리 + 대표 상품 + 참여 실적 */
+export interface ArtisanDetail {
+  slug: string;
+  name: string;
+  title: string;
+  designation: Designation;
+  shortIntro: string;
+  story: string | null;
+  coverImageUrl: string | null;
+  profileImageUrl: string | null;
+  videoUrl: string | null;
+  /** 임의 키(instagram, youtube 등) — admin에서 자유롭게 넣는다. */
+  snsLinks: Record<string, string>;
+  images: { imageUrl: string; caption: string | null; sortOrder: number }[];
+  products: {
+    slug: string;
+    name: string;
+    price: number;
+    category: ProductCategory;
+    status: ProductStatus;
+    thumbnailUrl: string | null;
+  }[];
+  projects: {
+    slug: string;
+    title: string;
+    type: ProjectType;
+    resultMetric: string | null;
+    projectDate: string;
+    thumbnailUrl: string | null;
+  }[];
 }
