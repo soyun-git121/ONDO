@@ -1,7 +1,10 @@
 import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
 import { getNewsList } from "../api/news";
+import { getProjects } from "../api/projects";
 import { useFetch } from "../hooks/useFetch";
 import { NEWS_CATEGORY_LABEL, type NewsSummary } from "../types/news";
+import type { ProjectSummary } from "../types/project";
 import EmptyBlock from "../components/ui/EmptyBlock";
 import NewsLink from "../components/news/NewsLink";
 import Logo from "../components/ui/Logo";
@@ -17,7 +20,9 @@ import { resolveImageUrl } from "../api/client";
  *   max-w-[1280px] 캔버스에 절대 좌표로 1:1 재현. 좌표 = (figmaX-80, figmaY-34).
  * <1280: 동일 요소를 세로 스택으로 반응형 재배치.
  *
- * 데이터: 프로젝트는 아직 없음 → 빈 플레이스홀더. 뉴스는 실제 /news API(네이버 임포트).
+ * 데이터: 실적 슬롯 4칸은 admin에서 '홈에 노출'로 고른 실적(GET /api/projects?placement=home)을
+ *   앞에서부터 채우고, 모자라는 칸은 와이어프레임대로 빈 박스로 남긴다.
+ *   뉴스는 실제 /news API(네이버 임포트).
  */
 
 /** ● 라임 도트 + 라벨 아이브로우 (blit) */
@@ -50,6 +55,51 @@ function newsMeta(news: NewsSummary) {
 export default function Home() {
   const { data: newsPage, loading: newsLoading } = useFetch(() => getNewsList({ size: 2 }), []);
   const news = newsPage?.content ?? [];
+
+  const { data: projectPage, loading: projectLoading } = useFetch(
+    () => getProjects({ placement: "home", size: 4 }),
+    [],
+  );
+  const projects = projectPage?.content ?? [];
+
+  /**
+   * 실적 슬롯 — 아이브로우 + 이미지 박스. 슬롯 크기는 와이어프레임 고정이라
+   * 자료가 없으면 빈 박스를 그대로 두고 레이아웃만 유지한다.
+   * 아이브로우는 네 칸 모두 'Project'로 통일한다(예전 와이어프레임의 Project 1/2 번호는 뺐다).
+   * 실적 제목은 링크의 aria-label로만 남긴다 — 라벨을 제목으로 바꾸면 칸마다 글자가 달라진다.
+   */
+  const projectSlot = (
+    item: ProjectSummary | undefined,
+    eyebrowClass: string,
+    mediaClass: string,
+  ) => {
+    if (!item) {
+      return (
+        <>
+          <Eyebrow className={eyebrowClass}>Project</Eyebrow>
+          <EmptyBlock label={projectLoading ? "불러오는 중…" : ""} className={mediaClass} />
+        </>
+      );
+    }
+    return (
+      <>
+        <Eyebrow className={eyebrowClass}>Project</Eyebrow>
+        <Link to={`/projects/${item.slug}`} className={`group ${mediaClass}`} aria-label={item.title}>
+          {item.thumbnailUrl ? (
+            <img
+              src={resolveImageUrl(item.thumbnailUrl)}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full rounded-md bg-surface-muted object-cover transition-opacity duration-fast group-hover:opacity-90"
+            />
+          ) : (
+            <EmptyBlock label="" className="h-full w-full" />
+          )}
+        </Link>
+      </>
+    );
+  };
 
   /** 데스크톱 News+ 슬롯 — 데이터 있으면 뉴스 링크, 없으면 빈 박스(와이어프레임 유지). */
   const desktopNewsSlot = (item: NewsSummary | undefined, posClass: string, mediaClass: string) => {
@@ -111,11 +161,18 @@ export default function Home() {
           </p>
 
           {/* 히어로 미디어 — figma 107:120 (좌 세로형) · 107:122 (우) · 107:121 (검정 사각) */}
-          <Eyebrow className="absolute left-[-9px] top-[324px]">Project 1</Eyebrow>
-          <EmptyBlock label="" className="absolute left-[-9px] top-[355px] h-[449px] w-[290px]" />
+          {projectSlot(
+            projects[0],
+            "absolute left-[-9px] top-[324px] w-[290px]",
+            "absolute left-[-9px] top-[355px] block h-[449px] w-[290px]",
+          )}
 
-          <EmptyBlock label="" className="absolute left-[980px] top-[177px] h-[356px] w-[340px]" />
-          <Eyebrow className="absolute left-[980px] top-[549px]">Project 1</Eyebrow>
+          {/* 우측 슬롯은 아이브로우가 이미지 아래에 온다(figma 107:122). */}
+          {projectSlot(
+            projects[1],
+            "absolute left-[980px] top-[549px] w-[340px]",
+            "absolute left-[980px] top-[177px] block h-[356px] w-[340px]",
+          )}
 
           <div
             aria-hidden="true"
@@ -145,12 +202,18 @@ export default function Home() {
             시장을 연결합니다
           </p>
 
-          {/* 프로젝트 쇼케이스 (데이터 준비 중) — figma 107:128 / 107:101 */}
-          <Eyebrow className="absolute left-[136px] top-[1146px]">Project 2</Eyebrow>
-          <EmptyBlock label="" className="absolute left-[136px] top-[1176px] h-[337px] w-[380px]" />
+          {/* 프로젝트 쇼케이스 — figma 107:128 / 107:101 */}
+          {projectSlot(
+            projects[2],
+            "absolute left-[136px] top-[1146px] w-[380px]",
+            "absolute left-[136px] top-[1176px] block h-[337px] w-[380px]",
+          )}
 
-          <Eyebrow className="absolute left-[820px] top-[1589px]">Project</Eyebrow>
-          <EmptyBlock label="" className="absolute left-[820px] top-[1624px] h-[309px] w-[500px]" />
+          {projectSlot(
+            projects[3],
+            "absolute left-[820px] top-[1589px] w-[500px]",
+            "absolute left-[820px] top-[1624px] block h-[309px] w-[500px]",
+          )}
 
           {/* News+ — figma 107:146 divider → 비대칭 뉴스 2슬롯(항상 표시, 데이터 없으면 빈 박스) */}
           <div className="absolute left-[-28px] top-[2081px] w-[1280px] border-t border-border-base" />
@@ -196,14 +259,8 @@ export default function Home() {
 
           {/* 히어로 미디어 (Project 1) */}
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <Eyebrow>Project 1</Eyebrow>
-              <EmptyBlock label="" className="mt-3 aspect-[290/449] w-full" />
-            </div>
-            <div>
-              <Eyebrow>Project 1</Eyebrow>
-              <EmptyBlock label="" className="mt-3 aspect-[340/356] w-full" />
-            </div>
+            <div>{projectSlot(projects[0], "", "mt-3 block aspect-[290/449] w-full")}</div>
+            <div>{projectSlot(projects[1], "", "mt-3 block aspect-[340/356] w-full")}</div>
           </div>
 
           {/* 타글라인 */}
@@ -222,14 +279,8 @@ export default function Home() {
 
           {/* 프로젝트 쇼케이스 */}
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <Eyebrow>Project 2</Eyebrow>
-              <EmptyBlock label="" className="mt-3 aspect-[380/337] w-full" />
-            </div>
-            <div>
-              <Eyebrow>Project</Eyebrow>
-              <EmptyBlock label="" className="mt-3 aspect-[500/309] w-full" />
-            </div>
+            <div>{projectSlot(projects[2], "", "mt-3 block aspect-[380/337] w-full")}</div>
+            <div>{projectSlot(projects[3], "", "mt-3 block aspect-[500/309] w-full")}</div>
           </div>
 
           {/* News+ */}
