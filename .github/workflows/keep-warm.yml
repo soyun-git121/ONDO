@@ -1,0 +1,64 @@
+name: keep-warm
+
+# 무료 플랜 두 곳을 깨워 두기 위한 주기적 헬스체크.
+#   - Render 무료 웹서비스: 15분 유휴면 잠들고, 다음 요청이 콜드 스타트로 1분 가까이 걸린다.
+#   - Aiven 무료 MySQL: 접속이 없는 상태가 이어지면 자동으로 전원이 내려간다.
+#     (전원이 내려가면 호스트명 DNS까지 사라져 백엔드가 UnknownHostException으로 기동 실패한다.)
+#
+# /api/health가 DB를 실제로 조회하므로, 이 핑 하나로 Render와 Aiven이 함께 깨어 있는다.
+#
+# 정각(:00)은 GitHub 러너가 가장 붐벼 스케줄이 밀리기 쉬워 10분 간격을 3분씩 밀어 둔다.
+
+on:
+  schedule:
+    - cron: "3,13,23,33,43,53 * * * *"
+  workflow_dispatch: # 필요할 때 수동으로도 돌린다
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: 백엔드 헬스체크
+        env:
+          # 백엔드 주소가 바뀌면 코드 수정 없이 저장소 Variables의 BACKEND_URL만 바꾸면 된다.
+          # (Settings → Secrets and variables → Actions → Variables)
+          BACKEND_URL: ${{ vars.BACKEND_URL || 'https://ondo-05l0.onrender.com' }}
+        run: |
+          set -u
+          URL="${BACKEND_URL%/}/api/health"
+          echo "GET $URL"
+
+          # 잠들어 있으면 첫 요청이 콜드 스타트라 오래 걸린다. 넉넉히 기다리고 두 번 더 재시도한다.
+          response=""
+          for attempt in 1 2 3; do
+            if response=$(curl -sS --max-time 120 -w $'\n%{http_code}' "$URL"); then
+              break
+            fi
+            echo "시도 ${attempt} 실패 — 20초 후 재시도"
+            response=""
+            sleep 20
+          done
+
+          if [ -z "$response" ]; then
+            echo "::error::백엔드에 연결하지 못했습니다 ($URL)"
+            exit 1
+          fi
+
+          code=$(printf '%s' "$response" | tail -n 1)
+          body=$(printf '%s' "$response" | sed '$d')
+          echo "HTTP $code"
+          echo "$body"
+
+          if [ "$code" != "200" ]; then
+            echo "::error::헬스체크가 HTTP $code 를 반환했습니다"
+            exit 1
+          fi
+
+          db=$(printf '%s' "$body" | grep -o '"db":"[^"]*"' | cut -d '"' -f 4)
+          if [ "$db" != "UP" ]; then
+            echo "::error::백엔드는 떴지만 DB에 연결되지 않았습니다 (db=${db:-unknown}). Aiven 서비스가 Powered off 상태인지 확인하세요."
+            exit 1
+          fi
+
+          echo "정상 — 백엔드·DB 모두 응답 (db=$db)"
