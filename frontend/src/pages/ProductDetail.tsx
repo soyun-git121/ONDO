@@ -200,7 +200,7 @@ export default function ProductDetail() {
               </Link>
             ) : (
               <Link
-                to="/order"
+                to={`/order?product=${data.slug}&qty=${qty}`}
                 className="mt-5 flex h-[56px] w-full items-center justify-center rounded-[28px] bg-primary text-[16px] font-medium text-text-primary"
               >
                 주문하기
