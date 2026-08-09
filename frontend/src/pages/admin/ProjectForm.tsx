@@ -31,7 +31,8 @@ const EMPTY: ProjectCreateRequest = {
   resultMetric: null,
   thumbnailUrl: null,
   projectDate: new Date().toISOString().slice(0, 10),
-  isFeatured: false,
+  showOnHome: false,
+  showOnCollaboration: false,
   displayOrder: 0,
   published: false,
   images: [],
@@ -66,8 +67,8 @@ export default function ProjectForm() {
       resultMetric: data.resultMetric,
       thumbnailUrl: data.thumbnailUrl,
       projectDate: data.projectDate,
-      // 응답은 featured, 요청은 isFeatured — 백엔드 DTO 필드명이 다르다.
-      isFeatured: data.featured,
+      showOnHome: data.showOnHome,
+      showOnCollaboration: data.showOnCollaboration,
       displayOrder: data.displayOrder,
       published: data.published,
       images: data.images,
@@ -276,8 +277,30 @@ export default function ProjectForm() {
           />
         </FormSection>
 
-        <FormSection title="노출" columns={1}>
-          <Field label="정렬 순서" hint="숫자가 작을수록 앞에 옵니다.">
+        <FormSection
+          title="노출"
+          description="'공개'를 켜야 어디에든 보입니다. 공개된 실적은 Project 목록에 항상 나오고, 홈·협업문의는 아래에서 따로 고릅니다."
+          columns={1}
+        >
+          <Checkbox
+            label="공개"
+            hint="끄면 공개 사이트 어디에도 노출되지 않습니다 — 아래 노출 위치를 켜도 마찬가지입니다."
+            checked={form.published}
+            onChange={(v) => set("published", v)}
+          />
+          <Checkbox
+            label="홈에 노출"
+            hint="홈 상단 실적 슬롯(최대 4칸)에 노출됩니다."
+            checked={form.showOnHome}
+            onChange={(v) => set("showOnHome", v)}
+          />
+          <Checkbox
+            label="협업문의 페이지에 노출"
+            hint="협업문의 페이지 하단 'PROOF — 온도가 만들어온 협업'에 노출됩니다."
+            checked={form.showOnCollaboration}
+            onChange={(v) => set("showOnCollaboration", v)}
+          />
+          <Field label="정렬 순서" hint="숫자가 작을수록 앞에 옵니다. 홈·협업문의 노출 순서에 쓰입니다.">
             <Input
               type="number"
               value={form.displayOrder}
@@ -285,18 +308,6 @@ export default function ProjectForm() {
               className="max-w-[160px]"
             />
           </Field>
-          <Checkbox
-            label="대표 실적"
-            hint="홈·협업문의 페이지에 노출됩니다."
-            checked={form.isFeatured}
-            onChange={(v) => set("isFeatured", v)}
-          />
-          <Checkbox
-            label="공개"
-            hint="끄면 공개 사이트에 노출되지 않습니다."
-            checked={form.published}
-            onChange={(v) => set("published", v)}
-          />
         </FormSection>
       </FormShell>
     </>

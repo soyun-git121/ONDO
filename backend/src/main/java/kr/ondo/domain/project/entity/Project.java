@@ -31,7 +31,8 @@ import org.hibernate.type.SqlTypes;
 @Getter
 @Table(name = "project", indexes = {
         @Index(name = "idx_project_list", columnList = "is_published, type, project_date"),
-        @Index(name = "idx_project_featured", columnList = "is_featured, display_order")
+        @Index(name = "idx_project_home", columnList = "show_on_home, display_order"),
+        @Index(name = "idx_project_collaboration", columnList = "show_on_collaboration, display_order")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Project extends BaseTimeEntity {
@@ -69,8 +70,15 @@ public class Project extends BaseTimeEntity {
     @Column(name = "project_date", nullable = false)
     private LocalDate projectDate;
 
-    @Column(name = "is_featured", nullable = false)
-    private boolean featured;
+    /**
+     * 노출 위치. 페이지마다 따로 고른다 — 홈에만, 협업문의에만, 둘 다, 어느 쪽도 아님이 모두 가능하다.
+     * 예전에는 is_featured 하나로 두 페이지를 함께 켜고 껐다(V2에서 분리).
+     */
+    @Column(name = "show_on_home", nullable = false)
+    private boolean showOnHome;
+
+    @Column(name = "show_on_collaboration", nullable = false)
+    private boolean showOnCollaboration;
 
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
@@ -88,7 +96,7 @@ public class Project extends BaseTimeEntity {
     @Builder
     private Project(String slug, String title, ProjectType type, String clientName, String summary,
                     String description, String resultMetric, String thumbnailUrl, LocalDate projectDate,
-                    boolean featured, int displayOrder, boolean published) {
+                    boolean showOnHome, boolean showOnCollaboration, int displayOrder, boolean published) {
         this.slug = slug;
         this.title = title;
         this.type = type;
@@ -98,7 +106,8 @@ public class Project extends BaseTimeEntity {
         this.resultMetric = resultMetric;
         this.thumbnailUrl = thumbnailUrl;
         this.projectDate = projectDate;
-        this.featured = featured;
+        this.showOnHome = showOnHome;
+        this.showOnCollaboration = showOnCollaboration;
         this.displayOrder = displayOrder;
         this.published = published;
     }
@@ -116,7 +125,8 @@ public class Project extends BaseTimeEntity {
     /** admin 수정 — slug 불변. */
     public void update(String title, ProjectType type, String clientName, String summary,
                        String description, String resultMetric, String thumbnailUrl,
-                       LocalDate projectDate, boolean featured, int displayOrder, boolean published) {
+                       LocalDate projectDate, boolean showOnHome, boolean showOnCollaboration,
+                       int displayOrder, boolean published) {
         this.title = title;
         this.type = type;
         this.clientName = clientName;
@@ -125,7 +135,8 @@ public class Project extends BaseTimeEntity {
         this.resultMetric = resultMetric;
         this.thumbnailUrl = thumbnailUrl;
         this.projectDate = projectDate;
-        this.featured = featured;
+        this.showOnHome = showOnHome;
+        this.showOnCollaboration = showOnCollaboration;
         this.displayOrder = displayOrder;
         this.published = published;
     }

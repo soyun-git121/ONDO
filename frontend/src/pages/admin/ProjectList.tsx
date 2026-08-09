@@ -47,7 +47,7 @@ export default function ProjectList() {
     <>
       <PageHeader
         title="협업 실적"
-        description="'대표 실적'으로 지정하면 홈·협업문의 페이지에 노출됩니다."
+        description="공개된 실적은 Project 목록에 나옵니다. 홈·협업문의에 띄울 실적은 등록 화면의 '노출'에서 따로 고릅니다."
         actions={
           <Link
             to="/admin/projects/new"
@@ -67,7 +67,7 @@ export default function ProjectList() {
             <Th>유형</Th>
             <Th>협업사</Th>
             <Th>일자</Th>
-            <Th>대표</Th>
+            <Th>노출 위치</Th>
             <Th>공개</Th>
             <Th className="text-right">관리</Th>
           </tr>
@@ -88,7 +88,17 @@ export default function ProjectList() {
               </Td>
               <Td className="text-text-muted">{p.clientName ?? "—"}</Td>
               <Td className="text-text-muted">{p.projectDate}</Td>
-              <Td>{p.featured ? <Badge tone="warning">대표</Badge> : null}</Td>
+              <Td>
+                {/* 둘 다 꺼져 있으면 Project 목록에만 나온다는 뜻 — 빈칸 대신 명시한다. */}
+                {p.showOnHome || p.showOnCollaboration ? (
+                  <span className="flex flex-wrap gap-1">
+                    {p.showOnHome && <Badge tone="warning">홈</Badge>}
+                    {p.showOnCollaboration && <Badge tone="warning">협업문의</Badge>}
+                  </span>
+                ) : (
+                  <span className="text-text-muted">목록만</span>
+                )}
+              </Td>
               <Td>
                 <PublishedBadge published={p.published} />
               </Td>

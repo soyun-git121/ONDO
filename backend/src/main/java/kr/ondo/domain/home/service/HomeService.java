@@ -24,7 +24,8 @@ public class HomeService {
         return new HomeResponse(
                 artisanService.getArtisans(0, 6, null).content(),
                 productService.getProducts(0, 6, null, null, "latest").content(),
-                projectService.getProjects(0, 6, null, null, null).content(),
+                // 홈 와이어프레임의 실적 슬롯이 4칸이라 4건까지만. admin에서 '홈 노출'로 고른 것만 내려간다.
+                projectService.getProjects(0, 4, null, null, "home").content(),
                 newsService.getNewsList(0, 5, null).content()
         );
     }

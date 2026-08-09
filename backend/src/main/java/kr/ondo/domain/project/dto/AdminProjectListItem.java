@@ -12,13 +12,14 @@ public record AdminProjectListItem(
         ProjectType type,
         String clientName,
         LocalDate projectDate,
-        boolean featured,
+        boolean showOnHome,
+        boolean showOnCollaboration,
         boolean published
 ) {
     public static AdminProjectListItem from(Project p) {
         return new AdminProjectListItem(
                 p.getId(), p.getSlug(), p.getTitle(), p.getType(), p.getClientName(),
-                p.getProjectDate(), p.isFeatured(), p.isPublished()
+                p.getProjectDate(), p.isShowOnHome(), p.isShowOnCollaboration(), p.isPublished()
         );
     }
 }

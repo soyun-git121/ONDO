@@ -2,6 +2,7 @@ package kr.ondo.domain.project.service;
 
 import kr.ondo.domain.project.dto.ProjectDetailResponse;
 import kr.ondo.domain.project.dto.ProjectSummaryResponse;
+import kr.ondo.domain.project.entity.ProjectPlacement;
 import kr.ondo.domain.project.entity.ProjectType;
 import kr.ondo.domain.project.exception.ProjectErrorCode;
 import kr.ondo.domain.project.repository.ProjectRepository;
@@ -26,16 +27,26 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
 
     public PageResponse<ProjectSummaryResponse> getProjects(int page, int size, String type,
-                                                            String artisanSlug, Boolean featured) {
-        Pageable pageable = PageRequest.of(Math.max(page, 0), clampSize(size),
-                Sort.by(Sort.Direction.DESC, "projectDate"));
+                                                            String artisanSlug, String placement) {
+        ProjectPlacement target = parsePlacement(placement);
         var result = projectRepository.search(
                 parseType(type),
                 (artisanSlug == null || artisanSlug.isBlank()) ? null : artisanSlug,
-                featured,
-                pageable
+                target == ProjectPlacement.HOME ? Boolean.TRUE : null,
+                target == ProjectPlacement.COLLABORATION ? Boolean.TRUE : null,
+                PageRequest.of(Math.max(page, 0), clampSize(size), sortFor(target))
         );
         return PageResponse.of(result, ProjectSummaryResponse::from);
+    }
+
+    /**
+     * 전체 목록은 최신순이지만, 홈·협업문의처럼 자리가 정해진 곳은 admin이 정한 순서를 먼저 따른다
+     * (displayOrder '숫자가 작을수록 앞'). 같은 순서면 최신 실적이 앞에 온다.
+     */
+    private Sort sortFor(ProjectPlacement placement) {
+        return placement == null
+                ? Sort.by(Sort.Direction.DESC, "projectDate")
+                : Sort.by(Sort.Order.asc("displayOrder"), Sort.Order.desc("projectDate"));
     }
 
     public ProjectDetailResponse getProject(String slug) {
@@ -46,6 +57,17 @@ public class ProjectService {
 
     private int clampSize(int size) {
         return size <= 0 ? DEFAULT_SIZE : Math.min(size, MAX_SIZE);
+    }
+
+    private ProjectPlacement parsePlacement(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        try {
+            return ProjectPlacement.valueOf(raw.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BusinessException(GlobalErrorCode.INVALID_INPUT, "지원하지 않는 placement: " + raw);
+        }
     }
 
     private ProjectType parseType(String raw) {

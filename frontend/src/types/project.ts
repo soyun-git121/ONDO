@@ -21,6 +21,12 @@ export const PROJECT_TYPE_LABEL: Record<ProjectType, string> = {
   ETC: "기타",
 };
 
+/**
+ * 실적을 어느 페이지에 노출할지 — admin에서 페이지별로 따로 고른다.
+ * 공개 API는 ?placement=home|collaboration 으로 해당 페이지 노출분만 걸러 준다.
+ */
+export type ProjectPlacement = "home" | "collaboration";
+
 /** GET /api/projects content 항목 */
 export interface ProjectSummary {
   slug: string;

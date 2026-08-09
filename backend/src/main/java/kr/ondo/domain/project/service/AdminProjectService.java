@@ -51,7 +51,8 @@ public class AdminProjectService {
                 .slug(req.slug()).title(req.title()).type(req.type()).clientName(req.clientName())
                 .summary(req.summary()).description(req.description()).resultMetric(req.resultMetric())
                 .thumbnailUrl(req.thumbnailUrl()).projectDate(req.projectDate())
-                .featured(req.isFeatured()).displayOrder(req.displayOrder()).published(req.published())
+                .showOnHome(req.showOnHome()).showOnCollaboration(req.showOnCollaboration())
+                .displayOrder(req.displayOrder()).published(req.published())
                 .build();
         toImages(req.images()).forEach(project::addImage);
         toParticipants(req.artisans()).forEach(project::addParticipant);
@@ -62,8 +63,8 @@ public class AdminProjectService {
     public AdminProjectResponse update(Long id, ProjectUpdateRequest req) {
         Project project = findOrThrow(id);
         project.update(req.title(), req.type(), req.clientName(), req.summary(), req.description(),
-                req.resultMetric(), req.thumbnailUrl(), req.projectDate(), req.isFeatured(),
-                req.displayOrder(), req.published());
+                req.resultMetric(), req.thumbnailUrl(), req.projectDate(),
+                req.showOnHome(), req.showOnCollaboration(), req.displayOrder(), req.published());
         project.replaceImages(toImages(req.images()));
         project.replaceParticipants(toParticipants(req.artisans()));
         return AdminProjectResponse.from(project);

@@ -26,9 +26,9 @@ public class ProjectController {
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String artisan,
-            @RequestParam(required = false) Boolean featured
+            @RequestParam(required = false) String placement
     ) {
-        return ApiResponse.ok(projectService.getProjects(page, size, type, artisan, featured));
+        return ApiResponse.ok(projectService.getProjects(page, size, type, artisan, placement));
     }
 
     @GetMapping("/{slug}")

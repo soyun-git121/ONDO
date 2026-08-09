@@ -180,7 +180,8 @@ export interface AdminProjectListItem {
   type: ProjectType;
   clientName: string | null;
   projectDate: string;
-  featured: boolean;
+  showOnHome: boolean;
+  showOnCollaboration: boolean;
   published: boolean;
 }
 
@@ -201,7 +202,8 @@ export interface AdminProjectResponse {
   resultMetric: string | null;
   thumbnailUrl: string | null;
   projectDate: string;
-  featured: boolean;
+  showOnHome: boolean;
+  showOnCollaboration: boolean;
   displayOrder: number;
   published: boolean;
   images: AdminImageItem[];
@@ -218,8 +220,9 @@ export interface ProjectCreateRequest {
   resultMetric: string | null;
   thumbnailUrl: string | null;
   projectDate: string;
-  /** 백엔드 필드명이 isFeatured — 응답의 featured와 이름이 다르니 주의. */
-  isFeatured: boolean;
+  /** 노출 위치 — 페이지별로 따로 켠다. 둘 다 꺼도 되고(=/projects 목록에만 노출) 둘 다 켜도 된다. */
+  showOnHome: boolean;
+  showOnCollaboration: boolean;
   displayOrder: number;
   published: boolean;
   images: AdminImageItem[];

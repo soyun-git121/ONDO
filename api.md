@@ -167,7 +167,12 @@ content 항목: `id, title, type, category, thumbnailUrl, sourceName, externalUr
 
 ### GET `/api/projects`
 
-쿼리: `page`, `size`, `type`, `artisan`(slug), `featured`(bool). 공개분만, `projectDate DESC`.
+쿼리: `page`, `size`, `type`, `artisan`(slug), `placement`(`home` | `collaboration`). 공개분만.
+
+정렬: 기본은 `projectDate DESC`. `placement`를 주면 admin이 정한 노출 순서를 먼저 따른다(`displayOrder ASC, projectDate DESC`).
+
+`placement`는 admin에서 페이지별로 켠 노출 위치로 좁힌다 — 홈은 `home`, 협업문의 PROOF는 `collaboration`.
+(v2 이전의 `featured`(bool) 하나로 두 페이지를 함께 켜던 방식을 대체한다.)
 
 content 항목: `slug, title, type, clientName, summary, resultMetric, thumbnailUrl, projectDate, artisans:[{slug,name}]`
 

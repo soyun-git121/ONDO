@@ -17,7 +17,8 @@ public record AdminProjectResponse(
         String resultMetric,
         String thumbnailUrl,
         LocalDate projectDate,
-        boolean featured,
+        boolean showOnHome,
+        boolean showOnCollaboration,
         int displayOrder,
         boolean published,
         List<ImageItem> images,
@@ -39,7 +40,7 @@ public record AdminProjectResponse(
         return new AdminProjectResponse(
                 p.getId(), p.getSlug(), p.getTitle(), p.getType(), p.getClientName(), p.getSummary(),
                 p.getDescription(), p.getResultMetric(), p.getThumbnailUrl(), p.getProjectDate(),
-                p.isFeatured(), p.getDisplayOrder(), p.isPublished(), images, artisans
+                p.isShowOnHome(), p.isShowOnCollaboration(), p.getDisplayOrder(), p.isPublished(), images, artisans
         );
     }
 }

@@ -16,19 +16,24 @@ import org.springframework.data.repository.query.Param;
  */
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
-    /** 목록 — 유형·보유자(slug)·featured 필터. 보유자 필터는 EXISTS 서브쿼리(중복/페이징 안전). */
+    /**
+     * 목록 — 유형·보유자(slug)·노출 위치 필터. 보유자 필터는 EXISTS 서브쿼리(중복/페이징 안전).
+     * 노출 위치 두 인자는 해당 페이지로 좁힐 때만 true를 넘기고, 전체 목록에서는 둘 다 null이다.
+     */
     @Query("""
             select p from Project p
             where p.published = true
               and (:type is null or p.type = :type)
-              and (:featured is null or p.featured = :featured)
+              and (:showOnHome is null or p.showOnHome = :showOnHome)
+              and (:showOnCollaboration is null or p.showOnCollaboration = :showOnCollaboration)
               and (:artisanSlug is null or exists (
                     select 1 from ProjectArtisan pa
                     where pa.project = p and pa.artisan.slug = :artisanSlug))
             """)
     Page<Project> search(@Param("type") ProjectType type,
                         @Param("artisanSlug") String artisanSlug,
-                        @Param("featured") Boolean featured,
+                        @Param("showOnHome") Boolean showOnHome,
+                        @Param("showOnCollaboration") Boolean showOnCollaboration,
                         Pageable pageable);
 
     Optional<Project> findBySlugAndPublishedTrue(String slug);
