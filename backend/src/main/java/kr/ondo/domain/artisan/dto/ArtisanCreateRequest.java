@@ -3,15 +3,17 @@ package kr.ondo.domain.artisan.dto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Map;
 import kr.ondo.domain.artisan.entity.Designation;
+import kr.ondo.global.validation.SlugPattern;
 
 /**
  * POST /api/admin/artisans 요청. api.md §8 (공개 응답 구조와 동일 필드).
  */
 public record ArtisanCreateRequest(
-        @NotBlank String slug,
+        @NotBlank @Pattern(regexp = SlugPattern.REGEXP, message = SlugPattern.MESSAGE) String slug,
         @NotBlank String name,
         @NotBlank String title,
         @NotNull Designation designation,

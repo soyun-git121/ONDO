@@ -122,6 +122,7 @@ export default function ArtisanForm() {
             <Input
               value={form.slug}
               onChange={(e) => set("slug", e.target.value)}
+              onBlur={(e) => set("slug", e.target.value.trim())}
               disabled={isEdit}
               required
               pattern="[a-z0-9-]+"

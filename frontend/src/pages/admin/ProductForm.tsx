@@ -125,11 +125,12 @@ export default function ProductForm() {
           <Field
             label="slug"
             required
-            hint={isEdit ? "식별자라 수정할 수 없습니다." : "URL에 쓰입니다."}
+            hint={isEdit ? "식별자라 수정할 수 없습니다." : "URL에 쓰입니다. 예: mini-buk-object"}
           >
             <Input
               value={form.slug}
               onChange={(e) => set("slug", e.target.value)}
+              onBlur={(e) => set("slug", e.target.value.trim())}
               disabled={isEdit}
               required
               pattern="[a-z0-9-]+"

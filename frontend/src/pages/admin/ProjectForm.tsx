@@ -132,14 +132,20 @@ export default function ProjectForm() {
           <Field
             label="slug"
             required
-            hint={isEdit ? "식별자라 수정할 수 없습니다." : "URL에 쓰입니다."}
+            hint={
+              isEdit
+                ? "식별자라 수정할 수 없습니다."
+                : "URL에 쓰입니다. 영문 소문자·숫자·하이픈만 — 예: bulguksa-limited"
+            }
           >
             <Input
               value={form.slug}
               onChange={(e) => set("slug", e.target.value)}
+              onBlur={(e) => set("slug", e.target.value.trim())}
               disabled={isEdit}
               required
               pattern="[a-z0-9-]+"
+              placeholder="bulguksa-limited"
             />
           </Field>
           <Field label="유형" required>

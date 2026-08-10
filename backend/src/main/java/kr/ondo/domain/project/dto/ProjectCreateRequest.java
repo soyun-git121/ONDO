@@ -3,13 +3,15 @@ package kr.ondo.domain.project.dto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.List;
 import kr.ondo.domain.project.entity.ProjectType;
+import kr.ondo.global.validation.SlugPattern;
 
 /** POST /api/admin/projects 요청. api.md §8 (artisans: [{artisanId, role}]). */
 public record ProjectCreateRequest(
-        @NotBlank String slug,
+        @NotBlank @Pattern(regexp = SlugPattern.REGEXP, message = SlugPattern.MESSAGE) String slug,
         @NotBlank String title,
         @NotNull ProjectType type,
         String clientName,
