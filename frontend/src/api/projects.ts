@@ -19,5 +19,5 @@ export function getProjects(params: {
 }
 
 export function getProject(slug: string): Promise<ProjectDetail> {
-  return get<ProjectDetail>(`/projects/${slug}`);
+  return get<ProjectDetail>(`/projects/${encodeURIComponent(slug)}`);
 }

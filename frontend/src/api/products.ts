@@ -18,5 +18,5 @@ export function getProducts(params: {
 }
 
 export function getProduct(slug: string): Promise<ProductDetail> {
-  return get<ProductDetail>(`/products/${slug}`);
+  return get<ProductDetail>(`/products/${encodeURIComponent(slug)}`);
 }
