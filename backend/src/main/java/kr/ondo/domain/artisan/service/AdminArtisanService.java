@@ -58,6 +58,7 @@ public class AdminArtisanService {
     @Transactional
     public AdminArtisanResponse update(Long id, ArtisanUpdateRequest req) {
         Artisan artisan = findOrThrow(id);
+        applySlug(artisan, req.slug());
         artisan.update(req.name(), req.title(), req.designation(), req.shortIntro(), req.story(),
                 req.profileImageUrl(), req.coverImageUrl(), req.videoUrl(), req.snsLinks(),
                 req.displayOrder(), req.published());
@@ -69,6 +70,17 @@ public class AdminArtisanService {
     public void delete(Long id) {
         Artisan artisan = findOrThrow(id);
         artisanRepository.delete(artisan);
+    }
+
+    /** slug가 실제로 바뀔 때만 중복을 검사한다 — 안 바꾸고 저장하면 자기 자신과 부딪히기 때문. */
+    private void applySlug(Artisan artisan, String slug) {
+        if (artisan.getSlug().equals(slug)) {
+            return;
+        }
+        if (artisanRepository.existsBySlugAndIdNot(slug, artisan.getId())) {
+            throw new BusinessException(GlobalErrorCode.DUPLICATE_SLUG);
+        }
+        artisan.changeSlug(slug);
     }
 
     private Artisan findOrThrow(Long id) {

@@ -11,5 +11,5 @@ export function getArtisans(params: {
 }
 
 export function getArtisan(slug: string): Promise<ArtisanDetail> {
-  return get<ArtisanDetail>(`/artisans/${slug}`);
+  return get<ArtisanDetail>(`/artisans/${encodeURIComponent(slug)}`);
 }

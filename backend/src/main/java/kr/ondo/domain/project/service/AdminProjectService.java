@@ -62,6 +62,7 @@ public class AdminProjectService {
     @Transactional
     public AdminProjectResponse update(Long id, ProjectUpdateRequest req) {
         Project project = findOrThrow(id);
+        applySlug(project, req.slug());
         project.update(req.title(), req.type(), req.clientName(), req.summary(), req.description(),
                 req.resultMetric(), req.thumbnailUrl(), req.projectDate(),
                 req.showOnHome(), req.showOnCollaboration(), req.displayOrder(), req.published());
@@ -73,6 +74,17 @@ public class AdminProjectService {
     @Transactional
     public void delete(Long id) {
         projectRepository.delete(findOrThrow(id));
+    }
+
+    /** slug가 실제로 바뀔 때만 중복을 검사한다 — 안 바꾸고 저장하면 자기 자신과 부딪히기 때문. */
+    private void applySlug(Project project, String slug) {
+        if (project.getSlug().equals(slug)) {
+            return;
+        }
+        if (projectRepository.existsBySlugAndIdNot(slug, project.getId())) {
+            throw new BusinessException(GlobalErrorCode.DUPLICATE_SLUG);
+        }
+        project.changeSlug(slug);
     }
 
     private Project findOrThrow(Long id) {

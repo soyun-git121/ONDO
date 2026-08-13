@@ -19,6 +19,9 @@ public interface ArtisanRepository extends JpaRepository<Artisan, Long> {
 
     boolean existsBySlug(String slug);
 
+    /** 수정 시 중복 검사 — 자기 자신은 제외한다(slug를 그대로 두고 저장하는 경우가 대부분이다). */
+    boolean existsBySlugAndIdNot(String slug, Long id);
+
     /** admin 상세 — 갤러리 함께 로드. */
     @EntityGraph(attributePaths = "images")
     Optional<Artisan> findWithImagesById(Long id);

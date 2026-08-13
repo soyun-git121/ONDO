@@ -134,15 +134,15 @@ spring:
     hibernate:
       ddl-auto: validate             # 운영은 스키마 검증만 (변경은 마이그레이션으로)
 
-ondo:
-  jwt:
-    # 기본값 없음 — JWT_SECRET 환경변수가 없으면 기동 실패(placeholder 미해결).
-    # 소스에 공개된 dev 기본값을 운영이 물려받아 관리자 토큰이 위조되는 것을 막는다.
-    secret: ${JWT_SECRET}
-
   flyway:
     locations: classpath:db/migration                    # 시드 없이 스키마만
 
   sql:
     init:
       mode: never
+
+ondo:
+  jwt:
+    # 기본값 없음 — JWT_SECRET 환경변수가 없으면 기동 실패(placeholder 미해결).
+    # 소스에 공개된 dev 기본값을 운영이 물려받아 관리자 토큰이 위조되는 것을 막는다.
+    secret: ${JWT_SECRET}

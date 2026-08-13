@@ -122,7 +122,15 @@ public class Project extends BaseTimeEntity {
         participant.assignProject(this);
     }
 
-    /** admin 수정 — slug 불변. */
+    /**
+     * slug 변경 — 공개 URL이 바뀐다. 기존에 공유된 링크는 404가 되므로 update()와 분리해 둔다.
+     * 중복 검사는 호출부(AdminProjectService)가 한다.
+     */
+    public void changeSlug(String slug) {
+        this.slug = slug;
+    }
+
+    /** admin 수정 — slug는 changeSlug()로 따로 바꾼다. */
     public void update(String title, ProjectType type, String clientName, String summary,
                        String description, String resultMetric, String thumbnailUrl,
                        LocalDate projectDate, boolean showOnHome, boolean showOnCollaboration,

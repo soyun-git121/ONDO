@@ -90,8 +90,7 @@ export default function ProductForm() {
     setSaving(true);
     try {
       if (isEdit) {
-        const { slug: _slug, ...body } = form;
-        await adminProducts.update(Number(id), body);
+        await adminProducts.update(Number(id), form);
         toast.success("상품을 저장했습니다.");
       } else {
         await adminProducts.create(form);
@@ -125,13 +124,16 @@ export default function ProductForm() {
           <Field
             label="slug"
             required
-            hint={isEdit ? "식별자라 수정할 수 없습니다." : "URL에 쓰입니다. 예: mini-buk-object"}
+            hint={
+              isEdit
+                ? "바꾸면 공개 주소가 바뀝니다. 지금까지 공유된 링크는 열리지 않게 됩니다."
+                : "URL에 쓰입니다. 예: mini-buk-object"
+            }
           >
             <Input
               value={form.slug}
               onChange={(e) => set("slug", e.target.value)}
               onBlur={(e) => set("slug", e.target.value.trim())}
-              disabled={isEdit}
               required
               pattern="[a-z0-9-]+"
               placeholder="mini-buk-object"

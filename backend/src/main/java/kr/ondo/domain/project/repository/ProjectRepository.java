@@ -40,6 +40,9 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     boolean existsBySlug(String slug);
 
+    /** 수정 시 중복 검사 — 자기 자신은 제외한다(slug를 그대로 두고 저장하는 경우가 대부분이다). */
+    boolean existsBySlugAndIdNot(String slug, Long id);
+
     /** 보유자 랜딩용 — 해당 보유자가 참여한 공개 실적 (projectDate DESC). api.md §2. */
     @Query("""
             select p from Project p
