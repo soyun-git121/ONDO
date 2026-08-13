@@ -106,7 +106,15 @@ public class Artisan extends BaseTimeEntity {
         image.assignArtisan(this);
     }
 
-    /** admin 수정 — slug는 식별자라 불변, 나머지 필드만 갱신. */
+    /**
+     * slug 변경 — 공개 URL이 바뀐다. 기존에 공유된 링크는 404가 되므로 update()와 분리해 둔다.
+     * 중복 검사는 호출부(AdminArtisanService)가 한다.
+     */
+    public void changeSlug(String slug) {
+        this.slug = slug;
+    }
+
+    /** admin 수정 — slug는 changeSlug()로 따로 바꾼다. */
     public void update(String name, String title, Designation designation, String shortIntro,
                        String story, String profileImageUrl, String coverImageUrl, String videoUrl,
                        Map<String, String> snsLinks, int displayOrder, boolean published) {

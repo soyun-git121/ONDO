@@ -89,8 +89,7 @@ export default function ProjectForm() {
     setSaving(true);
     try {
       if (isEdit) {
-        const { slug: _slug, ...body } = form;
-        await adminProjects.update(Number(id), body);
+        await adminProjects.update(Number(id), form);
         toast.success("실적을 저장했습니다.");
       } else {
         await adminProjects.create(form);
@@ -134,7 +133,7 @@ export default function ProjectForm() {
             required
             hint={
               isEdit
-                ? "식별자라 수정할 수 없습니다."
+                ? "바꾸면 공개 주소가 바뀝니다. 지금까지 공유된 링크는 열리지 않게 됩니다."
                 : "URL에 쓰입니다. 영문 소문자·숫자·하이픈만 — 예: bulguksa-limited"
             }
           >
@@ -142,7 +141,6 @@ export default function ProjectForm() {
               value={form.slug}
               onChange={(e) => set("slug", e.target.value)}
               onBlur={(e) => set("slug", e.target.value.trim())}
-              disabled={isEdit}
               required
               pattern="[a-z0-9-]+"
               placeholder="bulguksa-limited"

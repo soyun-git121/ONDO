@@ -61,6 +61,7 @@ public class AdminProductService {
     @Transactional
     public AdminProductResponse update(Long id, ProductUpdateRequest req) {
         Product product = findOrThrow(id);
+        applySlug(product, req.slug());
         Artisan artisan = loadArtisan(req.artisanId());
         product.update(artisan, req.name(), req.category(), req.price(), req.summary(),
                 req.description(), req.thumbnailUrl(), req.stockQuantity(), req.status(),
@@ -79,6 +80,17 @@ public class AdminProductService {
     @Transactional
     public void delete(Long id) {
         productRepository.delete(findOrThrow(id));
+    }
+
+    /** slug가 실제로 바뀔 때만 중복을 검사한다 — 안 바꾸고 저장하면 자기 자신과 부딪히기 때문. */
+    private void applySlug(Product product, String slug) {
+        if (product.getSlug().equals(slug)) {
+            return;
+        }
+        if (productRepository.existsBySlugAndIdNot(slug, product.getId())) {
+            throw new BusinessException(GlobalErrorCode.DUPLICATE_SLUG);
+        }
+        product.changeSlug(slug);
     }
 
     private Product findOrThrow(Long id) {

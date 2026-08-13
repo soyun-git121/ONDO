@@ -80,8 +80,8 @@ export interface ArtisanCreateRequest {
   images: AdminImageItem[];
 }
 
-/** slug는 식별자라 수정 불가 — 요청에서 빠진다. */
-export type ArtisanUpdateRequest = Omit<ArtisanCreateRequest, "slug">;
+/** slug도 수정 가능 — 잘못 저장된 값을 고칠 수 있어야 한다(바꾸면 기존 링크가 404가 된다). */
+export type ArtisanUpdateRequest = ArtisanCreateRequest;
 
 /* ---------- 상품 ---------- */
 
@@ -128,7 +128,8 @@ export interface ProductCreateRequest {
   images: AdminImageItem[];
 }
 
-export type ProductUpdateRequest = Omit<ProductCreateRequest, "slug">;
+/** slug도 수정 가능 — 잘못 저장된 값을 고칠 수 있어야 한다(바꾸면 기존 링크가 404가 된다). */
+export type ProductUpdateRequest = ProductCreateRequest;
 
 /* ---------- 뉴스 ---------- */
 
@@ -229,7 +230,8 @@ export interface ProjectCreateRequest {
   artisans: { artisanId: number; role: string | null }[];
 }
 
-export type ProjectUpdateRequest = Omit<ProjectCreateRequest, "slug">;
+/** slug도 수정 가능 — 잘못 저장된 값을 고칠 수 있어야 한다(바꾸면 기존 링크가 404가 된다). */
+export type ProjectUpdateRequest = ProjectCreateRequest;
 
 /* ---------- 문의 ---------- */
 
